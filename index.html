@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>피트니스 글 변환기 &amp; 금지어 필터 | 무료 웹툴</title>
+<meta name="description" content="헬스장·음식점·술집 사장님을 위한 무료 글 변환기. 메모 하나로 네이버 블로그·인스타그램·스마트플레이스 문구를 만들고, 업종별 금지·위험 표현을 실시간으로 걸러 줍니다.">
+<title>사장님 글 변환기 &amp; 금지어 필터 | 헬스장·음식점·술집 무료 웹툴</title>
 <style>
   :root{
     --ink:#0b1220;
@@ -53,7 +54,7 @@
     width:36px; height:36px; flex:0 0 36px; border-radius:11px;
     background:var(--volt); color:#0b1220;
     display:grid; place-items:center;
-    font-weight:800; font-size:12.5px; letter-spacing:.02em;
+    font-weight:800; font-size:15px; letter-spacing:.02em;
   }
   .brand-txt{min-width:0}
   .brand-txt h1{font-size:15.5px; font-weight:800; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
@@ -64,6 +65,35 @@
     border:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.78); white-space:nowrap;
   }
   .pill.volt{background:var(--volt); color:#0b1220; border-color:var(--volt)}
+
+  /* ---------- 업종 전환 바 ---------- */
+  .indbar{
+    background:#fff; border-bottom:1px solid var(--line);
+    box-shadow:0 10px 22px -20px rgba(11,18,32,.55);
+  }
+  .indbar-in{
+    max-width:1280px; margin:0 auto; padding:9px 20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .indbar-label{font-size:11.5px; font-weight:800; color:var(--soft); white-space:nowrap; letter-spacing:.02em}
+  .indtabs{
+    display:flex; gap:5px; padding:4px; background:#eef1f7; border-radius:12px;
+    flex:1 1 auto; min-width:0; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .indtabs::-webkit-scrollbar{display:none}
+  .indtab{
+    flex:1 1 0; min-width:126px; border:0; background:transparent;
+    font-family:inherit; font-size:13px; font-weight:800; color:#5b6678;
+    padding:8px 12px; border-radius:9px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    transition:background .15s, color .15s, box-shadow .15s;
+  }
+  .indtab:hover{color:var(--ink)}
+  .indtab[aria-selected="true"]{background:var(--ink); color:#fff; box-shadow:0 1px 3px rgba(11,18,32,.28)}
+  .indtab .ico{font-size:15px; line-height:1}
+  .indtab .n{font-size:10.5px; font-weight:800; color:#93a0b4}
+  .indtab[aria-selected="true"] .n{color:rgba(255,255,255,.62)}
+  .indbar-meta{font-size:11.5px; font-weight:700; color:var(--soft); white-space:nowrap}
 
   /* ---------- 레이아웃 ---------- */
   .wrap{
@@ -294,13 +324,22 @@
     .wrap{grid-template-columns:minmax(0,1fr); padding:16px 14px 32px}
     textarea.out{min-height:330px}
   }
+  @media (max-width: 900px){
+    .indbar-meta{display:none}
+    .indbar-in{padding:8px 14px}
+    .indtab{min-width:118px; font-size:12.5px; padding:8px 9px}
+  }
   @media (max-width: 640px){
     body{font-size:14.5px}
     .topbar-in{padding:10px 14px}
-    .brandmark{width:32px; height:32px; flex-basis:32px; border-radius:10px; font-size:11.5px}
+    .brandmark{width:32px; height:32px; flex-basis:32px; border-radius:10px; font-size:13.5px}
     .brand-txt h1{font-size:14.5px}
     .brand-txt p{font-size:11px}
     .topbar-pills .pill:not(.volt){display:none}
+    .indbar-label{display:none}
+    .indtabs{flex:1 1 auto}
+    .indtab{min-width:104px; font-size:12px; padding:8px 7px; gap:5px}
+    .indtab .n{display:none}
     .grid2{grid-template-columns:1fr}
     .field.span2{grid-column:auto}
     input[type="text"],input[type="password"],textarea{font-size:16px}
@@ -327,15 +366,33 @@
   <header class="topbar">
     <div class="topbar-in">
       <div class="brand">
-        <div class="brandmark" aria-hidden="true">FCS</div>
+        <div class="brandmark" aria-hidden="true">글</div>
         <div class="brand-txt">
-          <h1>피트니스 글 변환기 &amp; 금지어 필터</h1>
-          <p>메모 하나로 블로그 · 인스타 · 스마트플레이스 문구까지</p>
+          <h1>사장님 글 변환기 &amp; 금지어 필터</h1>
+          <p>헬스장 · 음식점 · 술집 무료 웹툴</p>
         </div>
       </div>
       <div class="topbar-pills">
         <span class="pill volt">API 키 없이 바로 동작</span>
-        <span class="pill">100% 오프라인 · 단일 파일</span>
+        <span class="pill">오프라인 · 단일 파일</span>
+      </div>
+    </div>
+
+    <div class="indbar">
+      <div class="indbar-in">
+        <span class="indbar-label">업종</span>
+        <div class="indtabs" role="tablist" aria-label="업종 선택" id="indTabs">
+          <button type="button" class="indtab" role="tab" id="ind-gym" data-ind="gym" aria-selected="true">
+            <span class="ico" aria-hidden="true">🏋️</span>헬스장·PT<span class="n" id="indn-gym">39</span>
+          </button>
+          <button type="button" class="indtab" role="tab" id="ind-food" data-ind="food" aria-selected="false">
+            <span class="ico" aria-hidden="true">🍽️</span>음식점·카페<span class="n" id="indn-food">48</span>
+          </button>
+          <button type="button" class="indtab" role="tab" id="ind-pub" data-ind="pub" aria-selected="false">
+            <span class="ico" aria-hidden="true">🍺</span>술집·주점<span class="n" id="indn-pub">36</span>
+          </button>
+        </div>
+        <span class="indbar-meta" id="indMeta">금지어 39개 적용 중</span>
       </div>
     </div>
   </header>
@@ -349,30 +406,30 @@
         <div class="card-head">
           <div>
             <h2 id="profileTitle">센터 프로필</h2>
-            <p class="hint">한 번 입력하면 이 브라우저에 저장되어 다음에도 그대로 씁니다.</p>
+            <p class="hint" id="profileHint">한 번 입력하면 이 브라우저에 저장되어 다음에도 그대로 씁니다.</p>
           </div>
           <button type="button" class="btn btn-ghost btn-xs" id="resetProfile">기본값</button>
         </div>
         <div class="grid2">
-          <label class="field" for="pCenter"><span>센터명</span>
+          <label class="field" for="pCenter"><span id="labelCenter">센터명</span>
             <input type="text" id="pCenter" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field" for="pBrand"><span>브랜드 태그 <em>선택</em></span>
+          <label class="field" for="pBrand"><span id="labelBrand">브랜드 태그</span> <em>선택</em>
             <input type="text" id="pBrand" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field span2" for="pRegion"><span>지역 키워드 <em>쉼표로 구분 · 제목·태그에 자동 배치</em></span>
+          <label class="field span2" for="pRegion"><span id="labelRegion">지역 키워드</span> <em>쉼표로 구분 · 제목·태그에 자동 배치</em>
             <input type="text" id="pRegion" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field" for="pHours"><span>영업시간</span>
+          <label class="field" for="pHours"><span id="labelHours">영업시간</span>
             <input type="text" id="pHours" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field" for="pPhone"><span>문의 연락처</span>
+          <label class="field" for="pPhone"><span id="labelPhone">문의 연락처</span>
             <input type="text" id="pPhone" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field span2" for="pAbout"><span>매장 특장점·주소 한 줄</span>
+          <label class="field span2" for="pAbout"><span id="labelAbout">매장 특장점·주소 한 줄</span>
             <input type="text" id="pAbout" autocomplete="off" spellcheck="false">
           </label>
-          <label class="field span2" for="pSlogan"><span>한 줄 슬로건 <em>선택</em></span>
+          <label class="field span2" for="pSlogan"><span id="labelSlogan">한 줄 슬로건</span> <em>선택</em>
             <input type="text" id="pSlogan" autocomplete="off" spellcheck="false">
           </label>
         </div>
@@ -382,14 +439,14 @@
         <div class="card-head">
           <div>
             <h2 id="memoTitle">원고 입력</h2>
-            <p class="hint">릴스 대본, 대충 적은 메모, 회원 상담 메모 무엇이든 좋습니다.</p>
+            <p class="hint" id="memoHint">릴스 대본, 대충 적은 메모, 상담 메모 무엇이든 좋습니다.</p>
           </div>
         </div>
-        <label class="field" for="topic" style="margin-bottom:10px"><span>주제·제목 키워드 <em>선택 (비우면 첫 문장에서 자동 추출)</em></span>
+        <label class="field" for="topic" style="margin-bottom:10px"><span id="labelTopic">주제·제목 키워드</span> <em>선택 (비우면 첫 문장에서 자동 추출)</em>
           <input type="text" id="topic" autocomplete="off" spellcheck="false" placeholder="예: 롱풀 자세, 허리 대신 등으로 당기는 법">
         </label>
         <label class="field" for="memo"><span>메모 / 릴스 대본</span>
-          <textarea id="memo" spellcheck="false" placeholder="오늘 찍은 릴스 내용이나 회원에게 설명한 내용을 편하게 적어 주세요.&#10;번호를 붙인 줄은 '핵심 포인트'로, 마지막 문의 안내 문장은 '마무리'로 자동 분류됩니다."></textarea>
+          <textarea id="memo" spellcheck="false" placeholder="오늘 찍은 릴스 내용이나 회원에게 설명한 내용을 편하게 적어 주세요."></textarea>
         </label>
         <div class="row-btns">
           <button type="button" class="btn btn-volt" id="loadExample">예시 원고 불러오기</button>
@@ -401,7 +458,7 @@
         <div class="card-head">
           <div>
             <h2 id="filterTitle">금지어 필터</h2>
-            <p class="hint">의료법·표시광고법 소지 표현을 실시간으로 표시합니다.</p>
+            <p class="hint" id="filterHint">의료법·표시광고법 소지 표현을 실시간으로 표시합니다.</p>
           </div>
           <span class="badge badge-neutral" id="badgeFilter" aria-live="polite">대기</span>
         </div>
@@ -416,12 +473,12 @@
         </div>
 
         <div class="custom-wrap">
-          <h3>내 금지어 추가</h3>
+          <h3>내 금지어 추가 <span class="soft" style="font-weight:600">(업종별로 따로 저장)</span></h3>
           <div class="grid2">
             <label class="field" for="customWord"><span>금지어</span>
               <input type="text" id="customWord" autocomplete="off" spellcheck="false" placeholder="예: 다이어트 보장">
             </label>
-            <label class="field" for="customAlt"><span>대체 표현 <em>선택</em></span>
+            <label class="field" for="customAlt"><span>대체 표현</span> <em>선택</em>
               <input type="text" id="customAlt" autocomplete="off" spellcheck="false" placeholder="예: 체중 관리">
             </label>
           </div>
@@ -469,7 +526,7 @@
               <span class="badge badge-neutral" id="badge-blog" aria-live="polite">대기</span>
               <span id="len-blog">0자</span>
             </div>
-            <span class="soft">제목 3안 · 본문 · 태그 20~24개</span>
+            <span class="soft" id="softBlog">제목 3안 · 본문 · 태그 20~24개</span>
           </div>
           <textarea class="out" id="out-blog" spellcheck="false" placeholder="원고를 입력하면 블로그 원고가 만들어집니다."></textarea>
           <div class="out-foot">
@@ -491,7 +548,7 @@
               <span id="len-ig">0자</span>
               <span id="tagcount-ig">0 / 24</span>
             </div>
-            <span class="soft">첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개</span>
+            <span class="soft" id="softIg">첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개</span>
           </div>
           <textarea class="out" id="out-ig" spellcheck="false" placeholder="원고를 입력하면 인스타그램 캡션이 만들어집니다."></textarea>
           <div class="out-foot">
@@ -512,7 +569,7 @@
               <span class="badge badge-neutral" id="badge-place" aria-live="polite">대기</span>
               <span id="len-place">0자</span>
             </div>
-            <span class="soft">짧은 공지 · 핵심 혜택 · 문의 안내</span>
+            <span class="soft" id="softPlace">짧은 공지 · 핵심 포인트 · 문의 안내</span>
           </div>
           <textarea class="out" id="out-place" spellcheck="false" placeholder="원고를 입력하면 스마트플레이스 소식이 만들어집니다."></textarea>
           <div class="out-foot">
@@ -532,18 +589,18 @@
           <span class="sum-left">AI API 키 연결 <span class="badge badge-neutral">선택 · 지금은 꺼짐</span></span>
         </summary>
         <div class="drawer-body">
-          <p><strong>지금 이 도구는 AI 없이도 완전히 동작합니다.</strong> 내장 금지어 사전과 규칙 기반 문장 조립만으로 블로그·인스타·플레이스 문구를 만들기 때문에, 인터넷이 끊겨도 파일 하나만 열면 바로 씁니다.</p>
-          <p>AI를 붙이면 문장이 더 매끄러워지는 정도의 업그레이드입니다. 아래는 나중에 키를 연결할 자리를 미리 만들어 둔 것이고, <b>이 프로토타입에서는 키를 전송하지도 저장하지도 않습니다.</b></p>
+          <p><strong>지금 이 도구는 AI 없이도 완전히 동작합니다.</strong> 업종별 금지어 사전과 규칙 기반 문장 조립만으로 블로그·인스타·플레이스 문구를 만들기 때문에, 인터넷이 끊겨도 파일 하나만 열면 바로 씁니다.</p>
+          <p>AI를 붙이면 문장이 더 매끄러워지는 정도의 업그레이드입니다. 아래는 나중에 키를 연결할 자리를 미리 만들어 둔 것이고, <b>이 버전에서는 키를 전송하지도 저장하지도 않습니다.</b></p>
           <div class="ai-grid">
             <label class="field" for="aiProvider"><span>제공자</span>
               <input type="text" id="aiProvider" value="OpenAI / Anthropic / Google" readonly>
             </label>
-            <label class="field" for="aiKey"><span>API 키 <em>저장 안 됨</em></span>
+            <label class="field" for="aiKey"><span>API 키</span> <em>저장 안 됨</em>
               <input type="password" id="aiKey" autocomplete="off" placeholder="sk-...">
             </label>
           </div>
           <div class="row-btns">
-            <button type="button" class="btn btn-ghost" id="aiTry" disabled>AI로 다듬기 (v2 예정)</button>
+            <button type="button" class="btn btn-ghost" id="aiTry" disabled>AI로 다듬기 (v3 예정)</button>
           </div>
           <p class="note" style="margin-top:12px"><b>참고:</b> 실제 연결은 서버나 개인 키 보관이 필요합니다. 공용 PC나 남에게 보낼 파일에는 키를 넣지 마세요.</p>
         </div>
@@ -552,8 +609,8 @@
   </main>
 
   <footer class="foot">
-    <p><b>피트니스 글 변환기 v0.1 (프로토타입)</b> · 단일 HTML 파일 · 외부 라이브러리 없음 · 입력값은 이 브라우저의 localStorage에만 저장됩니다.</p>
-    <p>금지어 판정은 일반적인 의료법·표시광고법 해석을 참고한 보조 도구입니다. 최종 판단과 책임은 센터에 있으며, 개별 문구는 필요 시 전문가 검토를 권합니다.</p>
+    <p><b>사장님 글 변환기 v0.2</b> · 단일 HTML 파일 · 외부 라이브러리 없음 · 입력값은 이 브라우저의 localStorage에만 저장됩니다.</p>
+    <p id="footNote">금지어 판정은 일반적인 의료법·표시광고법 해석을 참고한 보조 도구입니다. 최종 판단과 책임은 센터에 있으며, 개별 문구는 필요 시 전문가 검토를 권합니다.</p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -568,95 +625,7 @@ const FCS = (function () {
   'use strict';
 
   /* =========================================================
-     1. 기본값
-     ========================================================= */
-  const DEFAULTS = {
-    center: 'OO피트니스',
-    brand: 'OO FITNESS',
-    region: '강남pt, 강남헬스, 역삼pt, 역삼헬스',
-    hours: '06:00 - 23:00',
-    about: '서울시 OO구 OO로 00 · 100평대 · 머신 30여 종 · 개별 샤워실 · 주차 가능',
-    phone: '000-0000-0000',
-    slogan: '한 사람의 몸에 맞춘 운동'
-  };
-
-  const EXAMPLE = {
-    topic: '롱풀 자세, 허리 대신 등으로 당기는 법',
-    memo: [
-      '오늘은 롱풀(랫풀다운) 자세 하나만 짚고 갑니다.',
-      '등 운동인데 팔만 아프고 허리가 먼저 아픈 분들 많으시죠. 대부분 당기는 힘보다 몸통 세팅 문제입니다.',
-      '1) 시작 전 갈비뼈를 아래로 닫고 골반을 세웁니다.',
-      '2) 당길 때 어깨가 올라가지 않게, 날개뼈는 뒤·아래로.',
-      '3) 돌려보낼 때 팔을 길게 뻗어 등이 늘어나는 감각까지 확인합니다.',
-      '4) 허리를 젖히거나 반동 없이 8~12회 천천히.',
-      '허리 통증 치료나 재활운동을 생각하고 오시는 분들도 많은데, 저희는 평일 늦은 시간까지 운영 중이고 한 분 한 분 맞춤으로 봐 드립니다.',
-      '강남pt 역삼pt 찾으시면 편하게 문의 주세요. 롱풀 하나만 제대로 배워도 등 운동이 달라집니다.'
-    ].join('\n')
-  };
-
-  const DEFAULT_TARGETS = [
-    '혼자 운동하다 감이 안 잡히는 분',
-    '운동은 하는데 자극이 어디로 가는지 모르겠는 분',
-    '원리부터 이해하고 운동하고 싶은 분'
-  ];
-
-  const GENERIC_TAGS = [
-    '헬스장추천', '운동루틴', '코어운동', '기능해부학', '운동역학', '자세관리',
-    '체형관리', '근력운동', '운동정보', '운동초보', '운동습관', '헬스타그램',
-    '오운완', '운동기록', 'PT', '헬스'
-  ];
-
-  const STOP_TOKENS = [
-    '대해', '대한', '이야기', '오늘', '이번', '정리', '방법', '이렇게', '그렇게',
-    '그리고', '하지만', '위한', '하는', '있는', '없는', '합니다', '입니다', '갑니다',
-    '보겠습니다', '때문에', '정도', '경우', '하나만', '자세히', '이거', '저거'
-  ];
-
-  /* =========================================================
-     2. 내장 금지어 사전
-     ========================================================= */
-  const RULES = [
-    {
-      id: 'rehab', sev: 'risk', cat: '의료법',
-      why: '의료 행위로 읽힐 수 있습니다(무면허 의료행위). 운동 서비스에서는 컨디셔닝·움직임 개선으로 표현합니다.',
-      words: ['재활운동', '재활PT', '재활'],
-      alts: ['컨디셔닝', '움직임 개선', '기능성 트레이닝']
-    },
-    {
-      id: 'treat', sev: 'risk', cat: '의료법',
-      why: '치료·진단·처방은 의료인의 영역입니다. 케어·관리·체크 같은 표현으로 바꿉니다.',
-      words: ['치료', '완치', '진단', '처방'],
-      alts: ['케어', '관리', '체크', '운동 루틴']
-    },
-    {
-      id: 'pain', sev: 'risk', cat: '의료법·표시광고',
-      why: '질환명을 단정하거나 개선을 약속하면 의료법·표시광고법 위반 소지가 있습니다.',
-      words: ['통증 치료', '통증 개선', '허리디스크', '목디스크', '디스크', '측만증 교정'],
-      alts: ['불편감 완화 움직임', '밸런스 트레이닝', '바른 정렬 운동']
-    },
-    {
-      id: 'hours', sev: 'warn', cat: '영업시간·시설 표기',
-      why: '실제 운영과 다른 24시간·연중무휴 표기는 허위 표시가 될 수 있습니다. 실제 영업시간으로 적습니다.',
-      words: ['24시간 연중무휴', '연중무휴 24시간', '24시간 운영', '24시간', '24시', '연중무휴'],
-      alts: ['매일 {hours}', '{hours} 운영', '편한 시간에']
-    },
-    {
-      id: 'ad', sev: 'warn', cat: '표시광고법',
-      why: '최상급·보장 표현은 객관적 근거가 없으면 부당 표시가 됩니다. 담백한 표현으로 바꿉니다.',
-      words: ['확실한 감량', '다이어트 보장', '감량 보장', '부작용 없음', '만병통치', '특효',
-              '국내 최초', '업계 최초', '업계 1위', '최저가', '무조건', '100%', '최고', '유일'],
-      alts: ['개인 맞춤', '체계적인', '꾸준한']
-    },
-    {
-      id: 'posture', sev: 'warn', cat: '의료법·표시광고',
-      why: '교정·치료성 표현 대신 관리·정렬 운동으로 표현합니다.',
-      words: ['체형교정', '자세교정', '거북목 교정', '척추 교정', '오다리 교정'],
-      alts: ['체형 관리', '자세 관리', '정렬 운동']
-    }
-  ];
-
-  /* =========================================================
-     3. 유틸
+     0. 유틸
      ========================================================= */
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -705,6 +674,12 @@ const FCS = (function () {
     if (!arr.some(function (x) { return x.toLowerCase() === k; })) arr.push(val);
   }
 
+  function joinUnique(words) {
+    var out = [];
+    (words || []).filter(Boolean).forEach(function (w) { uniquePush(out, w); });
+    return out.join(' ');
+  }
+
   // 받침 유무(한글 음절). 한글이 아니면 -1
   function jongseong(ch) {
     if (!ch) return -1;
@@ -713,14 +688,6 @@ const FCS = (function () {
     return (code - 0xAC00) % 28;
   }
 
-  // 치환된 단어 뒤에 붙은 조사를 받침에 맞게 고쳐 준다 (치료나 → 움직임이나)
-  var PARTICLE_BASE = {
-    '이나': '나', '나': '나', '은': '는', '는': '는', '을': '를', '를': '를',
-    '이': '가', '가': '가', '과': '와', '와': '와', '으로': '로', '로': '로'
-  };
-  var PARTICLE_PLAIN = { '나': '나', '는': '는', '를': '를', '가': '가', '와': '와', '로': '로' };
-  var PARTICLE_BATCHIM = { '나': '이나', '는': '은', '를': '을', '가': '이', '와': '과', '로': '으로' };
-
   // 이름 뒤 조사: 받침이 있으면 withB, 없으면 withoutB (한글 아닌 글자로 끝나면 '은(는)' 형태)
   function josa(name, withB, withoutB) {
     var j = jongseong(String(name || '').slice(-1));
@@ -728,22 +695,34 @@ const FCS = (function () {
     return j === 0 ? withoutB : withB;
   }
 
+  // 치환된 단어 뒤에 붙은 조사를 받침에 맞게 고쳐 준다 (치료나 → 케어나)
+  var PARTICLE_BASE = {
+    '이나': '나', '나': '나', '은': '는', '는': '는', '을': '를', '를': '를',
+    '이': '가', '가': '가', '과': '와', '와': '와', '으로': '로', '로': '로'
+  };
+  var PARTICLE_PLAIN = { '나': '나', '는': '는', '를': '를', '가': '가', '와': '와', '로': '로' };
+  var PARTICLE_BATCHIM = { '나': '이나', '는': '은', '를': '을', '가': '이', '와': '과', '로': '으로' };
+
+  // 관형형으로 끝나는 대체어(부담 없는, 정성껏 만든 …) 뒤에는 목적격 조사를 붙이지 않는다
+  function isModifierEnding(s) {
+    return /(은|는|한|된|린|던|든|인|운)$/.test(String(s || ''));
+  }
+
   function fixParticle(alt, rest) {
     var out = { text: alt, consumed: 0 };
     if (!alt) return out;
     var j = jongseong(alt.slice(-1));
     if (j < 0) {
-      // 시간·숫자로 끝나는 치환 뒤의 '로'는 '까지'가 자연스럽다 (05:00 - 24:00까지)
-      if (/\d$/.test(alt)) {
-        var t = rest.match(/^(으로|로)/);
-        if (t) { out.text = alt + '까지'; out.consumed = t[0].length; }
-      }
+      // 시간·숫자·괄호로 끝나는 치환 뒤의 '로'는 '까지'가 자연스럽다 (17:00 - 02:00까지)
+      var t = rest.match(/^(으로|로)/);
+      if (t) { out.text = alt + '까지'; out.consumed = t[0].length; }
       return out;
     }
     var m = rest.match(/^(이나|나|은|는|을|를|이|가|과|와|으로|로)/);
     if (!m) return out;
     var after = rest.slice(m[0].length);
     if (/^[가-힣]/.test(after)) return out; // 조사가 아니라 단어의 일부
+    if (isModifierEnding(alt)) { out.consumed = m[0].length; return out; } // 조사만 떼어 낸다
     var base = PARTICLE_BASE[m[0]];
     var needs = base === '로' ? (j !== 0 && j !== 8) : (j !== 0);
     out.text = alt + (needs ? PARTICLE_BATCHIM[base] : PARTICLE_PLAIN[base]);
@@ -763,16 +742,532 @@ const FCS = (function () {
     return out;
   }
 
+  function regionAt(ctx, i, fb) {
+    return ctx.regions[i] || fb || ctx.regions[0] || ctx.p.center;
+  }
+
+  // 제목에 이미 들어간 지역 키워드는 한 번만 쓴다
+  function regionPick(ctx, i) {
+    var r = regionAt(ctx, i);
+    if (!r) return '';
+    return ctx.topic.indexOf(r) !== -1 ? '' : r;
+  }
+
   /* =========================================================
-     4. 사전 컴파일 & 탐지
+     1. 업종별 금지어 사전
      ========================================================= */
-  function compileRules(customWords) {
+
+  // 🏋️ 헬스장·PT — 의료법·표시광고법 (38개)
+  var GYM_RULES = [
+    {
+      id: 'rehab', sev: 'risk', cat: '의료법',
+      why: '의료 행위로 읽힐 수 있습니다(무면허 의료행위). 운동 서비스에서는 컨디셔닝·움직임 개선으로 표현합니다.',
+      words: ['재활운동', '재활PT', '재활'],
+      alts: ['컨디셔닝', '움직임 개선', '기능성 트레이닝']
+    },
+    {
+      id: 'treat', sev: 'risk', cat: '의료법',
+      why: '치료·진단·처방은 의료인의 영역입니다. 케어·관리·체크 같은 표현으로 바꿉니다.',
+      words: ['치료', '완치', '진단', '처방'],
+      alts: ['케어', '관리', '체크', '운동 루틴']
+    },
+    {
+      id: 'pain', sev: 'risk', cat: '의료법·표시광고',
+      why: '질환명을 단정하거나 개선을 약속하면 의료법·표시광고법 위반 소지가 있습니다.',
+      words: ['통증 치료', '통증 개선', '허리디스크', '목디스크', '디스크', '측만증 교정'],
+      alts: ['불편감 완화 움직임', '밸런스 트레이닝', '바른 정렬 운동']
+    },
+    {
+      id: 'hours', sev: 'warn', cat: '영업시간·시설 표기',
+      why: '실제 운영과 다른 24시간·연중무휴 표기는 허위 표시가 될 수 있습니다. 실제 영업시간으로 적습니다.',
+      words: ['24시간 연중무휴', '연중무휴 24시간', '24시간 운영', '24시간', '24시', '연중무휴'],
+      alts: ['매일 {hours}', '{hours} 운영', '편한 시간에']
+    },
+    {
+      id: 'ad', sev: 'warn', cat: '표시광고법',
+      why: '최상급·보장 표현은 객관적 근거가 없으면 부당 표시가 됩니다. 담백한 표현으로 바꿉니다.',
+      words: ['확실한 감량', '다이어트 보장', '감량 보장', '부작용 없음', '만병통치', '특효',
+              '국내 최초', '업계 최초', '업계 1위', '최저가', '원조', '무조건', '100%', '최고', '유일'],
+      alts: ['개인 맞춤', '체계적인', '꾸준한']
+    },
+    {
+      id: 'posture', sev: 'warn', cat: '의료법·표시광고',
+      why: '교정·치료성 표현 대신 관리·정렬 운동으로 표현합니다.',
+      words: ['체형교정', '자세교정', '거북목 교정', '척추 교정', '오다리 교정'],
+      alts: ['체형 관리', '자세 관리', '정렬 운동']
+    }
+  ];
+
+  // 🍽️ 음식점·카페 — 식품표시광고법·표시광고법
+  var FOOD_RULES = [
+    {
+      id: 'food-health', sev: 'risk', cat: '식품표시광고법',
+      why: '질병 예방·치료나 건강 효과를 단정하는 표현은 식품표시광고법 위반 소지가 큽니다. 맛과 식감 이야기로 바꿉니다.',
+      words: ['숙취 해소', '숙취해소', '피로 회복', '피로회복', '면역력 강화', '면역력', '혈액순환',
+              '소화 개선', '소화개선', '다이어트 효과', '체중 감량', '체중감량', '다이어트'],
+      alts: ['깔끔한 뒷맛', '든든한 한 끼', '제철 식재료', '따뜻한 한 그릇', '가벼운 한 끼'],
+      altsByWord: {
+        '면역력 강화': ['제철 식재료'], '면역력': ['제철 식재료'],
+        '혈액순환': ['따뜻한 한 그릇'],
+        '소화 개선': ['든든한 한 끼'], '소화개선': ['든든한 한 끼'],
+        '다이어트 효과': ['가벼운 한 끼'], '체중 감량': ['가벼운 한 끼'], '체중감량': ['가벼운 한 끼'],
+        '다이어트': ['가벼운 한 끼']
+      }
+    },
+    {
+      id: 'food-medicine', sev: 'risk', cat: '식품표시광고법·건강기능식품법',
+      why: '보약·약선·치료 같은 표현은 식품을 의약품처럼 보이게 합니다. 재료와 조리 이야기로 바꿉니다.',
+      words: ['보양식', '약선 요리', '약선', '보약', '치료', '만병통치', '항암', '혈당'],
+      alts: ['든든한 한 상', '제철 식재료', '정성껏 만든']
+    },
+    {
+      id: 'food-ad', sev: 'warn', cat: '표시광고법',
+      why: '최상급·1위·원조 같은 표현은 근거가 없으면 부당 표시입니다. 담백한 표현으로 바꿉니다.',
+      words: ['100% 수제', '100%', '국내 최초', '업계 최초', '업계 1위', '최저가', '원조',
+              '최고', '최상', '유일', '무조건', '보장', '부작용 없음', '특효'],
+      alts: ['정성껏 만든', '시그니처', '오래 사랑받은'],
+      altsByWord: {
+        '100% 수제': ['매장에서 직접 만든'],
+        '원조': ['오래 사랑받은'],
+        '100%': [],
+        '무조건': ['꼭'],
+        '보장': ['추천']
+      }
+    },
+    {
+      id: 'food-hours', sev: 'warn', cat: '영업시간·시설 표기',
+      why: '실제 운영과 다른 24시간·연중무휴 표기는 허위 표시가 될 수 있습니다. 실제 영업시간으로 적습니다.',
+      words: ['24시간 연중무휴', '연중무휴 24시간', '24시간 운영', '24시간', '24시', '연중무휴'],
+      alts: ['매일 {hours}', '{hours} 운영'],
+      altsByWord: {
+        '24시간 연중무휴': ['{hours}'], '연중무휴 24시간': ['{hours}'],
+        '24시간 운영': ['{hours} 운영'], '24시간': ['{hours}'], '24시': ['{hours}']
+      }
+    },
+    {
+      id: 'food-origin', sev: 'warn', cat: '원산지·식재료 표시',
+      why: '무첨가·유기농·국내산 같은 표시는 확인 가능한 근거가 필요합니다. 재료 이름을 그대로 적는 편이 안전합니다.',
+      words: ['무첨가', '무농약', '유기농', '방부제 없음', '화학첨가물', '국내산', '천연'],
+      alts: ['제철 재료', '매장 직접 조리', '정성껏 만든'],
+      altsByWord: {
+        '국내산': ['우리 땅에서 자란'], '무첨가': ['심플하게 만든'],
+        '무농약': ['정성껏 기른'], '유기농': ['정성껏 기른'],
+        '천연': ['자연 그대로의'], '방부제 없음': ['매일 만든'], '화학첨가물': ['기본 재료만']
+      }
+    }
+  ];
+
+  // 🍺 술집·주점 — 표시광고법·주류 광고 규정
+  var PUB_RULES = [
+    {
+      id: 'pub-hangover', sev: 'risk', cat: '식품표시광고법·주류 광고',
+      why: '숙취·다음날 컨디션을 보장하는 표현은 주류 광고에서 문제가 됩니다. 맛과 분위기 이야기로 바꿉니다.',
+      words: ['숙취 없는', '숙취없는', '숙취 해소', '숙취해소', '숙취 걱정'],
+      alts: ['부담 없는'],
+      altsByWord: {
+        '숙취 해소': ['깔끔한 뒷맛'], '숙취해소': ['깔끔한 뒷맛'], '숙취 걱정': ['부담']
+      }
+    },
+    {
+      id: 'pub-health', sev: 'risk', cat: '식품표시광고법',
+      why: '술을 건강에 좋은 것으로 표현하면 표시광고법 위반 소지가 있습니다. 분위기와 페어링 이야기로 바꿉니다.',
+      words: ['건강한 술자리', '건강한 술', '건강주', '몸에 좋은 술', '피로 회복', '면역력', '혈액순환',
+              '다이어트', '체중 감량'],
+      alts: ['가벼운 한 잔'],
+      altsByWord: {
+        '건강한 술자리': ['편안한 술자리'], '건강주': ['가벼운 한 잔'], '몸에 좋은 술': ['가벼운 한 잔'],
+        '피로 회복': ['기분 전환'], '면역력': ['기분 전환'], '혈액순환': ['기분 전환'],
+        '다이어트': ['가벼운 안주'], '체중 감량': ['가벼운 안주']
+      }
+    },
+    {
+      id: 'pub-ad', sev: 'warn', cat: '표시광고법',
+      why: '최상급·원조·1위 표현은 근거가 없으면 부당 표시입니다. 담백한 표현으로 바꿉니다.',
+      words: ['국내 최초', '업계 최초', '업계 1위', '최저가', '원조', '최고', '최상', '유일',
+              '무조건', '100%', '보장', '특효'],
+      alts: ['시그니처', '오래 사랑받은'],
+      altsByWord: {
+        '원조': ['오래 사랑받은'], '최고': ['시그니처'], '최상': ['시그니처'], '유일': ['시그니처'],
+        '100%': [], '무조건': ['꼭'], '보장': ['추천'], '특효': ['인기 있는']
+      }
+    },
+    {
+      id: 'pub-unlimited', sev: 'warn', cat: '표시광고법·주류 판매',
+      why: '무한리필·무제한은 조건을 함께 적지 않으면 오인 표시가 됩니다. 조건을 붙여 적습니다.',
+      words: ['무한리필', '무제한', '리필 무료', '리필무료'],
+      alts: ['매장 운영시간 기준'],
+      altsByWord: {
+        '무한리필': ['1인 1잔 기준 리필'], '무제한': ['매장 운영시간 기준'],
+        '리필 무료': ['1인 1잔 기준'], '리필무료': ['1인 1잔 기준']
+      }
+    },
+    {
+      id: 'pub-hours', sev: 'warn', cat: '영업시간·시설 표기',
+      why: '실제와 다른 24시간·연중무휴 표기는 허위 표시가 될 수 있습니다. 매장 운영시간을 그대로 적습니다.',
+      words: ['24시간 연중무휴', '연중무휴 24시간', '24시간 운영', '24시간', '24시', '연중무휴'],
+      alts: ['매장 운영시간 기준'],
+      altsByWord: {
+        '24시간 연중무휴': ['{hours}'], '연중무휴 24시간': ['{hours}'],
+        '24시간 운영': ['{hours} 운영'], '24시간': ['{hours}'], '24시': ['{hours}']
+      }
+    }
+  ];
+
+  /* =========================================================
+     2. 업종 정의 (프로필 기본값·예시·문구 틀·태그)
+     ========================================================= */
+  var IND = {};
+
+  IND.gym = {
+    key: 'gym', icon: '🏋️', label: '헬스장·PT', short: '헬스장',
+    profileTitle: '센터 프로필',
+    profileHint: '한 번 입력하면 ‘헬스장·PT’ 탭에 저장되어 다음에도 그대로 씁니다.',
+    labels: {
+      center: '센터명', brand: '브랜드 태그', region: '지역 키워드',
+      hours: '영업시간', phone: '문의 연락처',
+      about: '매장 특장점·주소 한 줄', slogan: '한 줄 슬로건'
+    },
+    memoHint: '릴스 대본, 대충 적은 메모, 회원 상담 메모 무엇이든 좋습니다.',
+    memoPlaceholder: '오늘 찍은 릴스 내용이나 회원에게 설명한 내용을 편하게 적어 주세요.\n번호를 붙인 줄은 ‘핵심 포인트’로, 마지막 문의 안내 문장은 ‘마무리’로 자동 분류됩니다.',
+    topicPlaceholder: '예: 롱풀 자세, 허리 대신 등으로 당기는 법',
+    filterHint: '의료법·표시광고법 소지 표현을 실시간으로 표시합니다.',
+    defaults: {
+      center: 'OO피트니스',
+      brand: 'OO FITNESS',
+      region: '강남pt, 강남헬스, 역삼pt, 역삼헬스',
+      hours: '06:00 - 23:00',
+      about: '서울시 OO구 OO로 00 · 100평대 · 머신 30여 종 · 개별 샤워실 · 주차 가능',
+      phone: '000-0000-0000',
+      slogan: '한 사람의 몸에 맞춘 운동'
+    },
+    example: {
+      topic: '롱풀 자세, 허리 대신 등으로 당기는 법',
+      memo: [
+        '오늘은 롱풀(랫풀다운) 자세 하나만 짚고 갑니다.',
+        '등 운동인데 팔만 아프고 허리가 먼저 아픈 분들 많으시죠. 대부분 당기는 힘보다 몸통 세팅 문제입니다.',
+        '1) 시작 전 갈비뼈를 아래로 닫고 골반을 세웁니다.',
+        '2) 당길 때 어깨가 올라가지 않게, 날개뼈는 뒤·아래로.',
+        '3) 돌려보낼 때 팔을 길게 뻗어 등이 늘어나는 감각까지 확인합니다.',
+        '4) 허리를 젖히거나 반동 없이 8~12회 천천히.',
+        '허리 통증 치료나 재활운동을 생각하고 오시는 분들도 많은데, 저희는 평일 늦은 시간까지 운영 중이고 한 분 한 분 맞춤으로 봐 드립니다.',
+        '강남pt 역삼pt 찾으시면 편하게 문의 주세요. 롱풀 하나만 제대로 배워도 등 운동이 달라집니다.'
+      ].join('\n')
+    },
+    rules: GYM_RULES,
+    fallbackRegion: '강남pt',
+    genericTags: ['헬스장추천', '운동루틴', '코어운동', '기능해부학', '운동역학', '자세관리',
+                  '체형관리', '근력운동', '운동정보', '운동초보', '운동습관', '헬스타그램',
+                  '오운완', '운동기록', 'PT', '헬스'],
+    tagVariants: [{ re: /헬스$/, add: '장' }],
+    targetSuffix: '에서 운동할 곳을 찾는 분',
+    targetRules: [
+      { re: /어깨|라운드|승모|목이|거북목/, text: '어깨·목이 뻐근해 운동해도 시원하지 않은 분' },
+      { re: /허리|골반|디스크/, text: '허리·골반 정렬이 신경 쓰이는 분' },
+      { re: /무릎|하체|스쿼트|익스텐션/, text: '무릎이 불편해 하체 운동을 미뤄 온 분' },
+      { re: /롱풀|랫풀|등 운동|당기|날개뼈/, text: '등 운동인데 팔·허리만 먼저 지치는 분' },
+      { re: /다이어트|감량|체중|체지방/, text: '체중·체형 관리가 목표인 분' },
+      { re: /초보|입문|처음/, text: '운동을 처음 시작해 기구 사용이 막막한 분' },
+      { re: /코어|복압|자세|정렬/, text: '코어·자세 감각을 확실히 잡고 싶은 분' }
+    ],
+    defaultTargets: [
+      '혼자 운동하다 감이 안 잡히는 분',
+      '운동은 하는데 자극이 어디로 가는지 모르겠는 분',
+      '원리부터 이해하고 운동하고 싶은 분'
+    ],
+    defaultPoints: function (topic) {
+      return [
+        topic + ' 전에 몸통 세팅부터 확인합니다. 갈비뼈를 내리고 골반을 세우는 것에서 시작합니다.',
+        '숨을 내쉬면서 복압을 360도로 유지합니다. 배 앞만 딱딱해지면 힘이 새는 신호입니다.',
+        '반동 없이 불편감 없는 범위에서 천천히, 자극이 어디로 가는지 확인하며 진행합니다.'
+      ];
+    },
+    footNote: '금지어 판정은 일반적인 의료법·표시광고법 해석을 참고한 보조 도구입니다. 최종 판단과 책임은 센터에 있으며, 개별 문구는 필요 시 전문가 검토를 권합니다.',
+    copy: {
+      titles: function (ctx, R) {
+        return [
+          joinUnique([R[0], R[2], ctx.p.center]) + ' | ' + ctx.topic,
+          ctx.topic + ' | ' + joinUnique([R[1], ctx.p.center]) + ' 운동 가이드',
+          joinUnique([R[3], ctx.p.center]) + ' | ' + ctx.topic + ' 핵심 ' + ctx.points.length + '가지'
+        ];
+      },
+      greeting: function (ctx, R0, R2) {
+        return '안녕하세요, ' + joinUnique([R0, R2]) + ' ' + ctx.p.center + '입니다.';
+      },
+      introLead: function (ctx) { return '오늘은 ' + ctx.topic + '에 대해 정리해 봤습니다.'; },
+      heads: {
+        points: '■ 핵심 포인트',
+        targets: '■ 이런 분께 추천합니다',
+        info: function (p) { return '■ ' + p.center + ' 안내'; }
+      },
+      rows: function (ctx) {
+        var p = ctx.p;
+        return [['위치·시설', p.about], ['영업시간', p.hours], ['문의', p.phone]];
+      },
+      closing: function (ctx, R0) {
+        return '궁금한 점은 편하게 문의 주세요. ' + R0 + '에서 기다리겠습니다.';
+      },
+      disclaimer: function (ctx) {
+        var p = ctx.p;
+        return '운동 중 불편감이 계속되면 운동 전 의료기관 상담을 먼저 권해 드립니다. ' +
+          p.center + josa(p.center, '은', '는') + ' 그 위에서 움직임 케어·컨디셔닝·체형 관리를 함께 봐 드립니다.';
+      },
+      igHook: function (ctx) {
+        return ctx.topic.length <= 24 ? ctx.topic + ' — 이거 하나만 보세요 👀' : short(ctx.topic, 20) + ' 👀';
+      },
+      igClosing: '자세가 궁금하면 DM 주세요 :)',
+      placeTitle: function (ctx) { return '[' + ctx.p.center + '] ' + ctx.topic + ' 안내'; },
+      placeLead: function (ctx) { return ctx.topic + ', 함께 확인해 보세요.'; },
+      placeBullets: function (ctx) {
+        var p = ctx.p;
+        return [
+          ['이런 분께', ctx.targets[0] || '운동을 시작하려는 분'],
+          ['핵심 포인트', ctx.points.slice(0, 2).map(function (t) { return short(t, 36); }).join(' / ') || '몸통 세팅부터 확인'],
+          ['운영시간', p.hours],
+          ['위치', p.about],
+          ['문의', p.phone]
+        ];
+      },
+      placeFooter: function (ctx, R0) { return R0 + ' ' + ctx.p.center + '에서 편하게 상담받아 보세요.'; },
+      soft: { blog: '제목 3안 · 본문 · 태그 20~24개', ig: '첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개', place: '짧은 공지 · 핵심 포인트 · 문의 안내' }
+    }
+  };
+
+  IND.food = {
+    key: 'food', icon: '🍽️', label: '음식점·카페', short: '음식점',
+    profileTitle: '매장 프로필',
+    profileHint: '한 번 입력하면 ‘음식점·카페’ 탭에 저장되어 다음에도 그대로 씁니다.',
+    labels: {
+      center: '상호명', brand: '브랜드 태그', region: '지역 키워드',
+      hours: '영업시간', phone: '문의·예약 연락처',
+      about: '대표 메뉴·매장 안내 한 줄', slogan: '한 줄 슬로건'
+    },
+    memoHint: '오늘 소개할 메뉴, 재료, 조리 방식, 손님 반응 메모 무엇이든 좋습니다.',
+    memoPlaceholder: '오늘 소개할 메뉴와 재료, 조리 방식, 손님 반응을 편하게 적어 주세요.\n번호를 붙인 줄은 ‘메뉴 포인트’로, 마지막 예약·문의 문장은 ‘마무리’로 자동 분류됩니다.',
+    topicPlaceholder: '예: 역삼 점심, 국물 한 그릇',
+    filterHint: '식품표시광고법·표시광고법 소지 표현을 실시간으로 표시합니다.',
+    defaults: {
+      center: 'OO식당',
+      brand: 'OO키친',
+      region: '강남 맛집, 역삼 점심, 강남 데이트',
+      hours: '11:30 - 21:30 (브레이크 15:00 - 17:00)',
+      about: '서울시 OO구 OO로 00 1층 · 20석 · 단체석 8인 · 예약 가능 · 주차 3대',
+      phone: '000-0000-0000',
+      slogan: '매일 아침 재료 손질부터'
+    },
+    example: {
+      topic: '역삼 점심, 국물 한 그릇으로 든든하게',
+      memo: [
+        '오늘은 점심에 새로 내보내는 국물 메뉴 이야기입니다.',
+        '국물은 매일 아침 사골과 채소로 우려내고, 면은 주문 후에 삶습니다.',
+        '1) 기본은 담백한 맛, 매운맛은 따로 조절해 드립니다.',
+        '2) 반찬은 매일 매장에서 직접 만듭니다.',
+        '3) 1인 11,000원, 점심시간 11:30 - 14:00.',
+        '국물은 매일 아침 우려내서 숙취 해소에 좋다고 소문이 났습니다. 피로 회복에도 좋다는 말을 많이 듣고, 다이어트 효과를 기대하고 오시는 분들도 있습니다. 반찬은 100% 수제 반찬으로 매일 만듭니다. 24시간 연중무휴로 문을 열어 두었습니다.',
+        '역삼에서 원조 국물 맛집으로 불리지만, 저희는 매일 같은 맛을 내는 데만 집중합니다.',
+        '역삼 점심 맛집으로 찾으시면 예약 없이 바로 오셔도 됩니다. 편하게 문의 주세요.'
+      ].join('\n')
+    },
+    rules: FOOD_RULES,
+    fallbackRegion: '강남 맛집',
+    genericTags: ['맛집추천', '맛집', '점심맛집', '저녁맛집', '데이트맛집', '가성비맛집',
+                  '회식장소', '가족외식', '혼밥', '브런치', '카페추천', '디저트맛집',
+                  '맛스타그램', '먹스타그램', '오늘뭐먹지', '내돈내산'],
+    tagVariants: [],
+    targetSuffix: '에서 한 끼 하기 좋은 곳을 찾는 분',
+    targetRules: [
+      { re: /점심|런치|직장/, text: '점심 메뉴를 고민하는 직장인' },
+      { re: /데이트|분위기|기념일/, text: '데이트·기념일에 어울리는 곳을 찾는 분' },
+      { re: /회식|단체|모임|상견례/, text: '회식·단체 모임 장소가 필요한 분' },
+      { re: /카페|커피|디저트|브런치/, text: '커피 한 잔과 디저트가 필요한 분' },
+      { re: /국물|찌개|탕|사골/, text: '뜨끈한 국물이 생각나는 날' },
+      { re: /가성비|가격|원/, text: '가격 대비 만족스러운 한 끼를 찾는 분' }
+    ],
+    defaultTargets: [
+      '오늘 뭐 먹을지 고민인 분',
+      '가볍게 한 끼 하고 싶은 분',
+      '동네 맛집을 찾는 분'
+    ],
+    defaultPoints: function (topic) {
+      return [
+        topic + ' 기준으로 재료 손질과 조리 순서를 먼저 확인했습니다.',
+        '간은 주문할 때 맞춰 드리고, 매운맛은 따로 담아 냅니다.',
+        '점심시간에는 회전이 빠른 메뉴부터 미리 준비해 둡니다.'
+      ];
+    },
+    footNote: '금지어 판정은 식품표시광고법·표시광고법의 일반적인 해석을 참고한 보조 도구입니다. 최종 판단과 책임은 매장에 있으며, 표시 내용은 필요 시 전문가 검토를 권합니다.',
+    copy: {
+      titles: function (ctx, R) {
+        return [
+          joinUnique([R[0], ctx.p.center]) + ' | ' + ctx.topic,
+          ctx.topic + ' | ' + joinUnique([regionPick(ctx, 1), ctx.p.center]) + ' 메뉴 이야기',
+          joinUnique([R[3], ctx.p.center]) + ' | ' + ctx.topic + ' 메뉴 소개'
+        ];
+      },
+      greeting: function (ctx, R0) {
+        return '안녕하세요, ' + R0 + ' ' + ctx.p.center + '입니다.';
+      },
+      introLead: function (ctx) { return '오늘은 ' + ctx.topic + ' 이야기를 준비했습니다.'; },
+      heads: {
+        points: '■ 오늘의 메뉴 포인트',
+        targets: '■ 이런 분께 잘 맞습니다',
+        info: function (p) { return '■ ' + p.center + ' 안내'; }
+      },
+      rows: function (ctx) {
+        var p = ctx.p;
+        return [['위치·매장', p.about], ['영업시간', p.hours], ['예약·문의', p.phone]];
+      },
+      closing: function (ctx, R0) {
+        return '예약 없이 오셔도 좋습니다. 궁금한 점은 편하게 문의 주세요. ' + R0 + '에서 기다리겠습니다.';
+      },
+      disclaimer: function (ctx) {
+        return '건강 효과를 단정하는 표현은 담지 않았습니다. 재료와 조리 방식은 매장 사정에 따라 달라질 수 있습니다.';
+      },
+      igHook: function (ctx) {
+        return ctx.topic.length <= 24 ? ctx.topic + ' — 오늘 이 메뉴 어때요? 🍽️' : short(ctx.topic, 20) + ' 🍽️';
+      },
+      igClosing: '메뉴가 궁금하면 DM 주세요 :)',
+      placeTitle: function (ctx) { return '[' + ctx.p.center + '] ' + ctx.topic + ' 안내'; },
+      placeLead: function (ctx) { return ctx.topic + ', 오늘 바로 드셔 보세요.'; },
+      placeBullets: function (ctx) {
+        var p = ctx.p;
+        return [
+          ['이런 분께', ctx.targets[0] || '한 끼 하러 오실 분'],
+          ['메뉴 포인트', ctx.points.slice(0, 2).map(function (t) { return short(t, 36); }).join(' / ') || '매일 아침 재료 손질'],
+          ['운영시간', p.hours],
+          ['위치', p.about],
+          ['예약·문의', p.phone]
+        ];
+      },
+      placeFooter: function (ctx, R0) { return R0 + ' ' + ctx.p.center + '에서 편하게 드셔 보세요.'; },
+      soft: { blog: '제목 3안 · 본문 · 태그 20~24개', ig: '첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개', place: '짧은 공지 · 메뉴 포인트 · 예약 안내' }
+    }
+  };
+
+  IND.pub = {
+    key: 'pub', icon: '🍺', label: '술집·주점', short: '술집',
+    profileTitle: '매장 프로필',
+    profileHint: '한 번 입력하면 ‘술집·주점’ 탭에 저장되어 다음에도 그대로 씁니다.',
+    labels: {
+      center: '상호명', brand: '브랜드 태그', region: '지역 키워드',
+      hours: '영업시간', phone: '예약·문의 연락처',
+      about: '콜키지·단체석·안주 안내 한 줄', slogan: '한 줄 슬로건'
+    },
+    memoHint: '오늘 소개할 술과 안주, 자리 분위기 메모 무엇이든 좋습니다.',
+    memoPlaceholder: '오늘 소개할 술과 안주, 자리 분위기를 편하게 적어 주세요.\n번호를 붙인 줄은 ‘한 잔 포인트’로, 마지막 예약·문의 문장은 ‘마무리’로 자동 분류됩니다.',
+    topicPlaceholder: '예: 합정 하이볼, 안주 페어링',
+    filterHint: '주류 광고·표시광고법 소지 표현을 실시간으로 표시합니다.',
+    defaults: {
+      center: 'OO주점',
+      brand: 'OO바',
+      region: '홍대 술집, 합정 하이볼, 연남동 이자카야',
+      hours: '17:00 - 02:00',
+      about: '서울시 OO구 OO로 00 2층 · 12석 · 단체석 10인 · 콜키지 가능',
+      phone: '000-0000-0000',
+      slogan: '얼음 하나까지 천천히'
+    },
+    example: {
+      topic: '합정 하이볼, 안주 페어링 세 가지',
+      memo: [
+        '오늘은 합정에서 하이볼 한 잔 하기 좋은 조합을 소개합니다.',
+        '얼음은 큰 얼음 하나만 넣고, 탄산은 마지막에 천천히 부어 향을 살립니다.',
+        '1) 시트러스 하이볼 - 가벼운 탄산과 감귤 껍질 향',
+        '2) 진저 하이볼 - 매콤한 생강과 담백한 안주',
+        '3) 위스키 하이볼 - 낮은 도수로 천천히',
+        '숙취 없는 다음날을 약속합니다. 건강한 술을 찾으신다면 하이볼이 좋고, 안주는 무한리필입니다. 원조 하이볼집으로 24시간 연중무휴로 운영하고 있습니다.',
+        '안주 맛은 최고의 조합입니다. 치즈 플레이트와 감자튀김은 꼭 함께 드셔 보세요.',
+        '합정 술집 찾으시면 편하게 문의 주세요. 단체석도 있습니다.'
+      ].join('\n')
+    },
+    rules: PUB_RULES,
+    fallbackRegion: '홍대 술집',
+    genericTags: ['술집추천', '술집', '이자카야', '하이볼', '안주맛집', '술스타그램',
+                  '혼술', '술자리', '회식', '단체모임', '데이트술집', '분위기좋은술집',
+                  '콜키지', '야식', '금요일밤', '한잔'],
+    tagVariants: [],
+    targetSuffix: '에서 한 잔 하기 좋은 곳을 찾는 분',
+    targetRules: [
+      { re: /하이볼|위스키|칵테일|사케/, text: '하이볼·위스키를 좋아하는 분' },
+      { re: /이자카야|안주|사시미|꼬치/, text: '안주가 중요한 분' },
+      { re: /단체|회식|모임|생일/, text: '단체 모임·회식 장소가 필요한 분' },
+      { re: /데이트|분위기|조용/, text: '조용히 이야기 나누고 싶은 날' },
+      { re: /콜키지|와인/, text: '콜키지 되는 술집을 찾는 분' }
+    ],
+    defaultTargets: [
+      '오늘 한 잔 하고 싶은 날',
+      '조용히 이야기 나누고 싶은 분',
+      '안주가 괜찮은 동네 술집을 찾는 분'
+    ],
+    defaultPoints: function (topic) {
+      return [
+        topic + ' 기준으로 얼음과 탄산 비율을 먼저 맞췄습니다.',
+        '안주는 술과 함께 천천히 즐기기 좋은 조합으로 준비했습니다.',
+        '단체석은 미리 예약하시면 자리 잡기가 편합니다.'
+      ];
+    },
+    footNote: '금지어 판정은 주류 광고·표시광고법의 일반적인 해석을 참고한 보조 도구입니다. 과음은 건강에 해로울 수 있으며, 19세 미만에게는 판매하지 않습니다.',
+    copy: {
+      titles: function (ctx, R) {
+        return [
+          joinUnique([R[0], ctx.p.center]) + ' | ' + ctx.topic,
+          ctx.topic + ' | ' + joinUnique([regionPick(ctx, 1), ctx.p.center]) + ' 한 잔 이야기',
+          joinUnique([R[3], ctx.p.center]) + ' | ' + ctx.topic + ' 추천 조합'
+        ];
+      },
+      greeting: function (ctx, R0) {
+        return '안녕하세요, ' + R0 + ' ' + ctx.p.center + '입니다.';
+      },
+      introLead: function (ctx) { return '오늘은 ' + ctx.topic + ' 이야기입니다.'; },
+      heads: {
+        points: '■ 오늘의 한 잔 포인트',
+        targets: '■ 이런 자리에 좋습니다',
+        info: function (p) { return '■ ' + p.center + ' 안내'; }
+      },
+      rows: function (ctx) {
+        var p = ctx.p;
+        return [['위치·매장', p.about], ['영업시간', p.hours], ['예약·문의', p.phone]];
+      },
+      closing: function (ctx, R0) {
+        return '자리와 안주는 편하게 문의 주세요. ' + R0 + '에서 기다리겠습니다.';
+      },
+      disclaimer: function (ctx) {
+        return '과음은 건강에 해로울 수 있습니다. 19세 미만에게는 판매하지 않습니다.';
+      },
+      igHook: function (ctx) {
+        return ctx.topic.length <= 24 ? ctx.topic + ' — 오늘 한 잔 어때요? 🍶' : short(ctx.topic, 20) + ' 🍶';
+      },
+      igClosing: '자리 문의는 DM 주세요 :)',
+      placeTitle: function (ctx) { return '[' + ctx.p.center + '] ' + ctx.topic + ' 안내'; },
+      placeLead: function (ctx) { return ctx.topic + ', 오늘 한 잔 어떠세요.'; },
+      placeBullets: function (ctx) {
+        var p = ctx.p;
+        return [
+          ['이런 자리에', ctx.targets[0] || '한 잔 하러 오실 분'],
+          ['추천 조합', ctx.points.slice(0, 2).map(function (t) { return short(t, 36); }).join(' / ') || '얼음과 탄산 비율부터'],
+          ['운영시간', p.hours],
+          ['위치', p.about],
+          ['예약·문의', p.phone]
+        ];
+      },
+      placeFooter: function (ctx, R0) { return R0 + ' ' + ctx.p.center + '에서 편하게 한 잔 하세요.'; },
+      soft: { blog: '제목 3안 · 본문 · 태그 20~24개', ig: '첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개', place: '짧은 공지 · 추천 조합 · 예약 안내' }
+    }
+  };
+
+  var KEYS = ['gym', 'food', 'pub'];
+  var DEFAULT_INDUSTRY = 'gym';
+
+  /* =========================================================
+     3. 사전 컴파일 & 탐지
+     ========================================================= */
+  function compileRules(customWords, industryKey) {
+    var ind = IND[industryKey] || IND[DEFAULT_INDUSTRY];
     var list = [];
-    RULES.forEach(function (r) {
+    ind.rules.forEach(function (r) {
       r.words.forEach(function (w) {
+        var alts = (r.altsByWord && r.altsByWord[w]) ? r.altsByWord[w].slice() : (r.alts || []).slice();
         list.push({
           id: r.id, word: w, sev: r.sev, cat: r.cat, why: r.why,
-          alts: r.alts.slice(), custom: false
+          alts: alts, custom: false
         });
       });
     });
@@ -864,7 +1359,7 @@ const FCS = (function () {
       var alts = m.rule.alts || [];
       var alt = altFor(m.rule, idx, profile);
 
-      // 바로 앞에서 쓴 표현이면 다른 대체어를 고른다 (개인 맞춤 개인 맞춤 → 개인 맞춤 체계적인)
+      // 바로 앞에서 쓴 표현이면 다른 대체어를 고른다
       if (alts.length > 1 && alt.length >= 2 && out.slice(-24).indexOf(alt) !== -1) {
         for (var k = 0; k < alts.length; k++) {
           var cand = resolveAlt(alts[k], profile);
@@ -888,30 +1383,8 @@ const FCS = (function () {
   }
 
   /* =========================================================
-     5. 원고 분석
+     4. 원고 분석
      ========================================================= */
-  function deriveTopic(memo) {
-    var items = parseMemo(memo);
-    var first = items.length ? items[0].text : '';
-    var t = first
-      .replace(/^(오늘은|오늘|이번엔|이번에는|자,|그래서|먼저|요즘|저희는|저희|우리는|우리)\s*/, '')
-      .split(/[.?!。]\s/)[0]
-      .replace(/\s*(하나만|한 가지만|딱 하나만)\s*(짚고|알려|보고)\s*(갑니다|드립니다|가겠습니다)[.!?]?$/, '')
-      .replace(/[.!?。]+$/, '')
-      .trim();
-
-    // 바로 앞 단어가 그대로 반복되면(치환 결과) 한 번만 남긴다
-    var words = t.split(/\s+/);
-    var dedup = [];
-    words.forEach(function (w) {
-      if (dedup[dedup.length - 1] !== w) dedup.push(w);
-    });
-    t = dedup.join(' ').replace(/\s*(운영 중입니다|중입니다|합니다|입니다|보장합니다|드립니다)$/, '').trim();
-
-    if (t.length > 28) t = t.slice(0, 28).replace(/\s+\S*$/, '') + '…';
-    return t || '오늘의 운동 이야기';
-  }
-
   function parseMemo(text) {
     var out = [];
     normalizeText(text).split(/\n+/).forEach(function (raw) {
@@ -925,7 +1398,7 @@ const FCS = (function () {
   }
 
   function isCta(t) {
-    return /(문의|DM|디엠|궁금|편하게|들러|상담|연락|예약|찾으시면|오세요|주세요|기다리)/.test(t);
+    return /(문의|DM|디엠|궁금|편하게|들러|상담|연락|예약|찾으시면|오세요|주세요|기다리|받습니다)/.test(t);
   }
 
   function analyze(memo) {
@@ -946,43 +1419,58 @@ const FCS = (function () {
     return { intro: intro, points: points, closing: short(closing, 130) };
   }
 
-  function defaultPoints(topic) {
-    return [
-      topic + ' 전에 몸통 세팅부터 확인합니다. 갈비뼈를 내리고 골반을 세우는 것에서 시작합니다.',
-      '숨을 내쉬면서 복압을 360도로 유지합니다. 배 앞만 딱딱해지면 힘이 새는 신호입니다.',
-      '반동 없이 불편감 없는 범위에서 천천히, 자극이 어디로 가는지 확인하며 진행합니다.'
-    ];
+  function deriveTopic(memo, ind) {
+    ind = ind || IND[DEFAULT_INDUSTRY];
+    var items = parseMemo(memo);
+    var first = items.length ? items[0].text : '';
+    var t = first
+      .replace(/^(오늘은|오늘|이번엔|이번에는|자,|그래서|먼저|요즘|저희는|저희|우리는|우리)\s*/, '')
+      .split(/[.?!。]\s/)[0]
+      .replace(/\s*(하나만|한 가지만|딱 하나만)\s*(짚고|알려|보고)\s*(갑니다|드립니다|가겠습니다)[.!?]?$/, '')
+      .replace(/[.!?。]+$/, '')
+      .trim();
+
+    // 바로 앞 단어가 그대로 반복되면(치환 결과) 한 번만 남긴다
+    var words = t.split(/\s+/);
+    var dedup = [];
+    words.forEach(function (w) {
+      if (dedup[dedup.length - 1] !== w) dedup.push(w);
+    });
+    t = dedup.join(' ').replace(/\s*(운영 중입니다|중입니다|합니다|입니다|보장합니다|드립니다)$/, '').trim();
+
+    if (t.length > 28) t = t.slice(0, 28).replace(/\s+\S*$/, '') + '…';
+    return t || ind.fallbackTopic;
   }
 
-  function splitRegion(s) {
+  function splitRegion(s, fallback) {
     var arr = String(s || '').split(/[,،，\n\/]+/).map(function (x) {
       return x.replace(/#/g, '').trim();
     }).filter(Boolean);
     var uniq = [];
     arr.forEach(function (x) { uniquePush(uniq, x); });
-    if (!uniq.length) uniq.push('강남pt');
+    if (!uniq.length) uniq.push(fallback || '강남pt');
     return uniq;
   }
 
   function targetsFor(ctx) {
-    var hay = (ctx.memo + ' ' + ctx.topic).toLowerCase();
     var out = [];
-    function add(s) { if (s) uniquePush(out, s); }
-    if (/어깨|라운드|승모|목이|거북목/.test(hay)) add('어깨·목이 뻐근해 운동해도 시원하지 않은 분');
-    if (/허리|골반|디스크/.test(hay)) add('허리·골반 정렬이 신경 쓰이는 분');
-    if (/무릎|하체|스쿼트|익스텐션/.test(hay)) add('무릎이 불편해 하체 운동을 미뤄 온 분');
-    if (/롱풀|랫풀|등 운동|당기|날개뼈/.test(hay)) add('등 운동인데 팔·허리만 먼저 지치는 분');
-    if (/다이어트|감량|체중|체지방/.test(hay)) add('체중·체형 관리가 목표인 분');
-    if (/초보|입문|처음/.test(hay)) add('운동을 처음 시작해 기구 사용이 막막한 분');
-    if (/코어|복압|자세|정렬/.test(hay)) add('코어·자세 감각을 확실히 잡고 싶은 분');
-    add((ctx.regions[0] || ctx.p.center) + '에서 운동할 곳을 찾는 분');
-    DEFAULT_TARGETS.forEach(function (t) { if (out.length < 3) add(t); });
+    (ctx.ind.targetRules || []).forEach(function (t) {
+      if (t.re.test(ctx.memo + ' ' + ctx.topic)) uniquePush(out, t.text);
+    });
+    uniquePush(out, (ctx.regions[0] || ctx.p.center) + ctx.ind.targetSuffix);
+    (ctx.ind.defaultTargets || []).forEach(function (t) { if (out.length < 4) uniquePush(out, t); });
     return out.slice(0, 4);
   }
 
   /* =========================================================
-     6. 태그
+     5. 태그
      ========================================================= */
+  var STOP_TOKENS = [
+    '대해', '대한', '이야기', '오늘', '이번', '정리', '방법', '이렇게', '그렇게',
+    '그리고', '하지만', '위한', '하는', '있는', '없는', '합니다', '입니다', '갑니다',
+    '보겠습니다', '때문에', '정도', '경우', '하나만', '자세히', '이거', '저거'
+  ];
+
   function topicTokens(topic) {
     return String(topic || '')
       .split(/[^가-힣a-zA-Z0-9]+/)
@@ -1006,35 +1494,27 @@ const FCS = (function () {
       out.push(s);
     }
     ctx.regions.forEach(function (r) { push(r); });
-    ctx.regions.forEach(function (r) { if (/헬스$/.test(r)) push(r + '장'); });
+    (ctx.ind.tagVariants || []).forEach(function (v) {
+      ctx.regions.forEach(function (r) { if (v.re.test(r)) push(r + v.add); });
+    });
     push(ctx.p.center);
     if (ctx.p.brand) push(ctx.p.brand);
     topicTokens(ctx.topic).forEach(push);
-    GENERIC_TAGS.forEach(push);
+    (ctx.ind.genericTags || []).forEach(push);
     return out.slice(0, max);
   }
 
   /* =========================================================
-     7. 채널별 문구 생성
+     6. 채널별 문구 생성
      ========================================================= */
-  function regionAt(ctx, i, fb) {
-    return ctx.regions[i] || fb || ctx.regions[0] || ctx.p.center;
-  }
-
-  function joinUnique(words) {
-    var out = [];
-    words.filter(Boolean).forEach(function (w) { uniquePush(out, w); });
-    return out.join(' ');
-  }
-
   function blogText(ctx) {
-    var p = ctx.p;
-    var R0 = regionAt(ctx, 0), R1 = regionAt(ctx, 1, R0), R2 = regionAt(ctx, 2, R1), R3 = regionAt(ctx, 3, R0);
-    var titles = [
-      joinUnique([R0, R2]) + ' ' + p.center + ' | ' + ctx.topic,
-      ctx.topic + ' | ' + R1 + ' ' + p.center + ' 운동 가이드',
-      R3 + ' ' + p.center + ' | ' + ctx.topic + ' 핵심 ' + ctx.points.length + '가지'
-    ];
+    var p = ctx.p, C = ctx.ind.copy;
+    var R = [regionAt(ctx, 0), regionAt(ctx, 1), regionAt(ctx, 2), regionAt(ctx, 3)];
+    R[1] = R[1] || R[0];
+    R[2] = R[2] || R[1];
+    R[3] = R[3] || R[0];
+
+    var titles = C.titles(ctx, R);
 
     var L = [];
     L.push('【제목 후보 · 하나를 골라 쓰세요】');
@@ -1044,35 +1524,32 @@ const FCS = (function () {
     L.push('');
     L.push('────────────────────────────');
     L.push('');
-    L.push('안녕하세요, ' + joinUnique([R0, R2]) + ' ' + p.center + '입니다.');
+    L.push(C.greeting(ctx, R[0], R[2]));
     L.push('');
     var introStarts = /^(오늘은|오늘|이번엔|이번에는)/.test(ctx.intro[0] || '');
     if (!introStarts) {
-      L.push('오늘은 ' + ctx.topic + '에 대해 정리해 봤습니다.');
+      L.push(C.introLead(ctx));
       L.push('');
     }
     if (ctx.intro.length) {
       ctx.intro.forEach(function (t) { L.push(t); L.push(''); });
     }
-    L.push('■ 핵심 포인트');
+    L.push(C.heads.points);
     ctx.points.forEach(function (t, i) { L.push((i + 1) + '. ' + t); });
     L.push('');
-    L.push('■ 이런 분께 추천합니다');
+    L.push(C.heads.targets);
     ctx.targets.forEach(function (t) { L.push('• ' + t); });
     L.push('');
-    L.push('■ ' + p.center + ' 안내');
-    L.push('· 위치·시설: ' + p.about);
-    L.push('· 영업시간: ' + p.hours);
-    L.push('· 문의: ' + p.phone);
+    L.push(C.heads.info(p));
+    C.rows(ctx).forEach(function (r) { L.push('· ' + r[0] + ': ' + r[1]); });
     L.push('');
     if (p.slogan) {
       L.push(p.center + ' | ' + p.slogan);
       L.push('');
     }
-    L.push(ctx.closing || ('궁금한 점은 편하게 문의 주세요. ' + R0 + '에서 기다리겠습니다.'));
+    L.push(ctx.closing || C.closing(ctx, R[0]));
     L.push('');
-    L.push('운동 중 불편감이 계속되면 운동 전 의료기관 상담을 먼저 권해 드립니다. ' +
-           p.center + josa(p.center, '은', '는') + ' 그 위에서 움직임 케어·컨디셔닝·체형 관리를 함께 봐 드립니다.');
+    L.push(C.disclaimer(ctx));
     L.push('');
     L.push('태그 ' + ctx.tags.length + '개');
     L.push(ctx.tags.map(function (t) { return '#' + t; }).join(' '));
@@ -1080,13 +1557,10 @@ const FCS = (function () {
   }
 
   function igText(ctx) {
-    var p = ctx.p;
+    var p = ctx.p, C = ctx.ind.copy;
     var R0 = regionAt(ctx, 0);
-    var hook = ctx.topic.length <= 24
-      ? ctx.topic + ' — 이거 하나만 보세요 👀'
-      : short(ctx.topic, 20) + ' 👀';
 
-    var L = [hook, ''];
+    var L = [C.igHook(ctx), ''];
     ctx.intro.slice(0, 2).forEach(function (t, i) {
       wrapPara(t, 32).forEach(function (l) { L.push(l); });
       if (i === 0) L.push('');
@@ -1097,7 +1571,7 @@ const FCS = (function () {
     if (ctx.closing) {
       wrapPara(ctx.closing, 32).forEach(function (l) { L.push(l); });
     } else {
-      L.push('자세가 궁금하면 DM 주세요 :)');
+      L.push(C.igClosing);
     }
     L.push('📍 ' + R0 + ' ' + p.center);
     L.push('⏰ ' + p.hours);
@@ -1108,25 +1582,21 @@ const FCS = (function () {
   }
 
   function placeText(ctx) {
-    var p = ctx.p;
+    var C = ctx.ind.copy;
     var R0 = regionAt(ctx, 0);
     var L = [];
-    L.push('[' + p.center + '] ' + ctx.topic + ' 안내');
+    L.push(C.placeTitle(ctx));
     L.push('');
-    L.push((ctx.intro[1] || ctx.intro[0]) ? short(ctx.intro[1] || ctx.intro[0], 90) : (ctx.topic + ', 함께 확인해 보세요.'));
+    L.push((ctx.intro[1] || ctx.intro[0]) ? short(ctx.intro[1] || ctx.intro[0], 90) : C.placeLead(ctx));
     L.push('');
-    L.push('· 이런 분께: ' + (ctx.targets[0] || '운동을 시작하려는 분'));
-    L.push('· 핵심 포인트: ' + (ctx.points.slice(0, 2).map(function (t) { return short(t, 36); }).join(' / ') || '몸통 세팅부터 확인'));
-    L.push('· 운영시간: ' + p.hours);
-    L.push('· 위치: ' + p.about);
-    L.push('· 문의: ' + p.phone);
+    C.placeBullets(ctx).forEach(function (row) { L.push('· ' + row[0] + ': ' + row[1]); });
     L.push('');
-    L.push(R0 + ' ' + p.center + '에서 편하게 상담받아 보세요.');
+    L.push(C.placeFooter(ctx, R0));
     return L.join('\n');
   }
 
   /* =========================================================
-     8. 발행 전 점검
+     7. 발행 전 점검
      ========================================================= */
   function countTags(text) {
     var m = String(text || '').match(/#[^\s#]+/g);
@@ -1164,31 +1634,33 @@ const FCS = (function () {
   }
 
   /* =========================================================
-     9. 전체 조립
+     8. 전체 조립
      ========================================================= */
-  function prepare(profileIn, memoIn, banned, topicIn) {
+  function prepare(profileIn, memoIn, banned, topicIn, industryKey) {
+    var ind = IND[industryKey] || IND[DEFAULT_INDUSTRY];
     var p = {};
-    Object.keys(DEFAULTS).forEach(function (k) { p[k] = DEFAULTS[k]; });
+    Object.keys(ind.defaults).forEach(function (k) { p[k] = ind.defaults[k]; });
     if (profileIn) {
       Object.keys(profileIn).forEach(function (k) {
         if (profileIn[k] !== undefined && profileIn[k] !== null) p[k] = String(profileIn[k]);
       });
     }
-    if (!p.center.trim()) p.center = DEFAULTS.center;
-    if (!p.hours.trim()) p.hours = DEFAULTS.hours;
-    if (!p.region.trim()) p.region = DEFAULTS.region;
+    if (!p.center.trim()) p.center = ind.defaults.center;
+    if (!p.hours.trim()) p.hours = ind.defaults.hours;
+    if (!p.region.trim()) p.region = ind.defaults.region;
 
-    var rules = compileRules(banned);
+    var rules = compileRules(banned, ind.key);
     var rawMemo = normalizeText(memoIn);
     var cleaned = sanitize(rawMemo, rules, p);
     var memo = cleaned.text;
-    var regions = splitRegion(p.region);
+    var regions = splitRegion(p.region, ind.fallbackRegion);
 
     var topicRaw = String(topicIn || '').trim();
-    var topic = topicRaw ? sanitize(topicRaw, rules, p).text : deriveTopic(memo);
+    var topic = topicRaw ? sanitize(topicRaw, rules, p).text : deriveTopic(memo, ind);
 
     var ctx = {
       p: p,
+      ind: ind,
       regions: regions,
       rules: rules,
       rawMemo: rawMemo,
@@ -1202,7 +1674,7 @@ const FCS = (function () {
     var a = analyze(memo);
     ctx.intro = a.intro;
     ctx.closing = a.closing;
-    ctx.points = a.points.length ? a.points : defaultPoints(topic);
+    ctx.points = a.points.length ? a.points : ind.defaultPoints(topic);
     ctx.targets = targetsFor(ctx);
     ctx.tags = buildTags(ctx, 24);
 
@@ -1219,16 +1691,37 @@ const FCS = (function () {
   }
 
   /* =========================================================
-     10. UI
+     9. UI
      ========================================================= */
-  const LS_PROFILE = 'fcs.profile.v1';
-  const LS_BANNED = 'fcs.banned.v1';
-  const TABS = ['blog', 'ig', 'place'];
+  var LS = {
+    profile: 'fcs.profile.v2',
+    banned: 'fcs.banned.v2',
+    industry: 'fcs.industry.v2',
+    seen: 'fcs.seen.v2',
+    legacyProfile: 'fcs.profile.v1',
+    legacyBanned: 'fcs.banned.v1'
+  };
+  var TABS = ['blog', 'ig', 'place'];
+  var FIELD_MAP = {
+    pCenter: 'center', pBrand: 'brand', pRegion: 'region', pHours: 'hours',
+    pAbout: 'about', pPhone: 'phone', pSlogan: 'slogan'
+  };
+  var LABEL_MAP = {
+    center: 'labelCenter', brand: 'labelBrand', region: 'labelRegion',
+    hours: 'labelHours', phone: 'labelPhone', about: 'labelAbout', slogan: 'labelSlogan'
+  };
+
+  function wordCount(rules) {
+    var n = 0;
+    (rules || []).forEach(function (r) { n += r.words.length; });
+    return n;
+  }
 
   function initUI() {
     var state = {
-      profile: {},
-      banned: [],
+      industry: DEFAULT_INDUSTRY,
+      profiles: {},
+      banned: {},
       memo: '',
       topic: '',
       active: 'blog',
@@ -1245,7 +1738,7 @@ const FCS = (function () {
       t.textContent = msg;
       t.classList.add('show');
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+      toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2400);
     }
 
     function readJSON(key) {
@@ -1259,39 +1752,117 @@ const FCS = (function () {
       try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
     }
 
-    /* ---------- 상태 로드/저장 ---------- */
-    function loadStored() {
-      var stored = readJSON(LS_PROFILE) || {};
-      state.profile = {};
-      Object.keys(DEFAULTS).forEach(function (k) {
-        state.profile[k] = (typeof stored[k] === 'string' && stored[k]) ? stored[k] : DEFAULTS[k];
-      });
-      var b = readJSON(LS_BANNED);
-      state.banned = Array.isArray(b) ? b.filter(function (x) { return x && x.word; })
+    function cleanBanned(list) {
+      return Array.isArray(list) ? list.filter(function (x) { return x && x.word; })
         .map(function (x) { return { word: String(x.word), alt: String(x.alt || '') }; }) : [];
     }
 
+    /* ---------- 상태 로드/저장 ---------- */
+    function loadStored() {
+      var storedP = readJSON(LS.profile);
+      var legacyP = readJSON(LS.legacyProfile);
+      var hasV2 = storedP && typeof storedP === 'object' && Object.keys(storedP).length > 0;
+
+      state.profiles = {};
+      KEYS.forEach(function (k) {
+        var ind = IND[k];
+        var src = (hasV2 && storedP[k] && typeof storedP[k] === 'object')
+          ? storedP[k]
+          : (!hasV2 && k === 'gym' && legacyP && typeof legacyP === 'object' ? legacyP : null);
+        var prof = {};
+        Object.keys(ind.defaults).forEach(function (f) {
+          prof[f] = (src && typeof src[f] === 'string' && src[f]) ? src[f] : ind.defaults[f];
+        });
+        state.profiles[k] = prof;
+      });
+
+      var storedB = readJSON(LS.banned);
+      var legacyB = readJSON(LS.legacyBanned);
+      state.banned = {};
+      KEYS.forEach(function (k) {
+        var src = (storedB && Array.isArray(storedB[k])) ? storedB[k]
+                : (!storedB && k === 'gym' ? legacyB : null);
+        state.banned[k] = cleanBanned(src);
+      });
+
+      var savedInd = null;
+      try { savedInd = window.localStorage.getItem(LS.industry); } catch (e) {}
+      state.industry = (savedInd && IND[savedInd]) ? savedInd : DEFAULT_INDUSTRY;
+    }
+
+    function save() {
+      writeJSON(LS.profile, state.profiles);
+      writeJSON(LS.banned, state.banned);
+    }
+
     function fillProfileInputs() {
-      var map = {
-        pCenter: 'center', pBrand: 'brand', pRegion: 'region', pHours: 'hours',
-        pAbout: 'about', pPhone: 'phone', pSlogan: 'slogan'
-      };
-      Object.keys(map).forEach(function (id) {
+      var prof = state.profiles[state.industry] || IND[state.industry].defaults;
+      Object.keys(FIELD_MAP).forEach(function (id) {
         var el = $(id);
-        if (el) el.value = state.profile[map[id]] || '';
+        if (el) el.value = prof[FIELD_MAP[id]] || '';
       });
     }
 
     function readProfileInputs() {
-      var map = {
-        pCenter: 'center', pBrand: 'brand', pRegion: 'region', pHours: 'hours',
-        pAbout: 'about', pPhone: 'phone', pSlogan: 'slogan'
-      };
-      Object.keys(map).forEach(function (id) {
+      var prof = state.profiles[state.industry];
+      if (!prof) return;
+      Object.keys(FIELD_MAP).forEach(function (id) {
         var el = $(id);
-        if (el) state.profile[map[id]] = el.value;
+        if (el) prof[FIELD_MAP[id]] = el.value;
       });
-      writeJSON(LS_PROFILE, state.profile);
+      save();
+    }
+
+    /* ---------- 업종 화면 동기화 ---------- */
+    function syncIndustryUI() {
+      var ind = IND[state.industry];
+      if ($('profileTitle')) $('profileTitle').textContent = ind.profileTitle;
+      if ($('profileHint')) $('profileHint').textContent = ind.profileHint;
+      Object.keys(ind.labels).forEach(function (k) {
+        var el = $(LABEL_MAP[k]);
+        if (el) el.textContent = ind.labels[k];
+      });
+      if ($('memoHint')) $('memoHint').textContent = ind.memoHint;
+      if ($('memo')) $('memo').setAttribute('placeholder', ind.memoPlaceholder);
+      if ($('topic')) $('topic').setAttribute('placeholder', ind.topicPlaceholder);
+      if ($('filterHint')) $('filterHint').textContent = ind.filterHint;
+      if ($('softBlog')) $('softBlog').textContent = ind.copy.soft.blog;
+      if ($('softIg')) $('softIg').textContent = ind.copy.soft.ig;
+      if ($('softPlace')) $('softPlace').textContent = ind.copy.soft.place;
+      if ($('footNote')) $('footNote').textContent = ind.footNote;
+
+      KEYS.forEach(function (k) {
+        var b = $('ind-' + k);
+        if (b) b.setAttribute('aria-selected', k === state.industry ? 'true' : 'false');
+        var n = $('indn-' + k);
+        if (n) n.textContent = String(wordCount(IND[k].rules));
+      });
+      if ($('indMeta')) $('indMeta').textContent = '금지어 ' + wordCount(ind.rules) + '개 적용 중';
+      if ($('indTabs')) $('indTabs').setAttribute('aria-label', '업종 선택 (' + ind.label + ' 선택됨)');
+    }
+
+    /* ---------- 업종 전환 ---------- */
+    function setIndustry(key) {
+      if (!IND[key] || key === state.industry) return;
+      readProfileInputs();
+      var prev = state.industry;
+      state.industry = key;
+      try { window.localStorage.setItem(LS.industry, key); } catch (e) {}
+
+      // 이전 업종 예시를 그대로 두고 있었다면 새 업종 예시로 바꿔 준다
+      var memoEl = $('memo'), topicEl = $('topic');
+      var wasExample = !memoEl.value.trim() || memoEl.value === IND[prev].example.memo;
+      if (wasExample) {
+        memoEl.value = IND[key].example.memo;
+        topicEl.value = IND[key].example.topic;
+      }
+      TABS.forEach(function (t) { state.locked[t] = false; });
+
+      fillProfileInputs();
+      syncIndustryUI();
+      renderDict();
+      refresh();
+      toast('‘' + IND[key].label + '’ 기준으로 바꿨습니다. 프로필과 내 금지어는 업종별로 따로 저장됩니다.');
     }
 
     /* ---------- 배지 ---------- */
@@ -1466,7 +2037,7 @@ const FCS = (function () {
       readProfileInputs();
       state.memo = $('memo').value;
       state.topic = $('topic').value;
-      var ctx = prepare(state.profile, state.memo, state.banned, state.topic);
+      var ctx = prepare(state.profiles[state.industry], state.memo, state.banned[state.industry], state.topic, state.industry);
       state.ctx = ctx;
       renderFilter(ctx);
       TABS.forEach(renderTab);
@@ -1478,11 +2049,12 @@ const FCS = (function () {
     function renderCustomList() {
       var box = $('customList');
       box.innerHTML = '';
-      if (!state.banned.length) {
-        box.innerHTML = '<span class="soft" style="font-size:11.5px">아직 추가한 표현이 없습니다.</span>';
+      var list = state.banned[state.industry] || [];
+      if (!list.length) {
+        box.innerHTML = '<span class="soft" style="font-size:11.5px">아직 추가한 표현이 없습니다. (업종별로 따로 저장됩니다)</span>';
         return;
       }
-      state.banned.forEach(function (c, i) {
+      list.forEach(function (c, i) {
         var el = document.createElement('span');
         el.className = 'tag';
         el.innerHTML = esc(c.word) + (c.alt ? ' → ' + esc(c.alt) : ' → 삭제') +
@@ -1495,10 +2067,11 @@ const FCS = (function () {
       var w = $('customWord').value.trim();
       var a = $('customAlt').value.trim();
       if (!w) { toast('금지어를 입력해 주세요.'); $('customWord').focus(); return; }
-      var exists = state.banned.some(function (c) { return c.word.toLowerCase() === w.toLowerCase(); });
+      var list = state.banned[state.industry];
+      var exists = list.some(function (c) { return c.word.toLowerCase() === w.toLowerCase(); });
       if (exists) { toast('이미 추가된 표현입니다.'); return; }
-      state.banned.push({ word: w, alt: a });
-      writeJSON(LS_BANNED, state.banned);
+      list.push({ word: w, alt: a });
+      save();
       $('customWord').value = '';
       $('customAlt').value = '';
       refresh();
@@ -1582,17 +2155,18 @@ const FCS = (function () {
 
     /* ---------- 사전 ---------- */
     function renderDict() {
+      var ind = IND[state.industry];
       var words = 0;
-      RULES.forEach(function (r) { words += r.words.length; });
+      ind.rules.forEach(function (r) { words += r.words.length; });
       $('dictCount').textContent = String(words);
-      $('dictBody').innerHTML = RULES.map(function (r) {
+      $('dictBody').innerHTML = ind.rules.map(function (r) {
         var sev = r.sev === 'risk' ? '위험' : '주의';
         var cls = r.sev === 'risk' ? 'badge-risk' : 'badge-warn';
         return '<div class="dict-row">' +
           '<div class="dict-head"><span class="badge ' + cls + '">' + sev + '</span>' +
           '<span class="dict-cat">' + esc(r.cat) + '</span></div>' +
           '<p class="dict-words">' + r.words.map(function (w) { return '<code>' + esc(w) + '</code>'; }).join('') + '</p>' +
-          '<p class="dict-alt">추천 → ' + r.alts.map(function (a) { return esc(a); }).join(', ') + '</p>' +
+          '<p class="dict-alt">추천 → ' + esc((r.alts || []).join(', ')) + '</p>' +
         '</div>';
       }).join('');
     }
@@ -1611,9 +2185,15 @@ const FCS = (function () {
       $('memo').addEventListener('input', debouncedRefresh);
       $('topic').addEventListener('input', debouncedRefresh);
 
+      KEYS.forEach(function (k) {
+        var b = $('ind-' + k);
+        if (b) b.addEventListener('click', function () { setIndustry(k); });
+      });
+
       $('loadExample').addEventListener('click', function () {
-        $('memo').value = EXAMPLE.memo;
-        $('topic').value = EXAMPLE.topic;
+        var ind = IND[state.industry];
+        $('memo').value = ind.example.memo;
+        $('topic').value = ind.example.topic;
         TABS.forEach(function (t) { state.locked[t] = false; });
         refresh();
         toast('예시 원고를 불러왔습니다. (위험 표현이 일부러 들어 있습니다)');
@@ -1628,10 +2208,12 @@ const FCS = (function () {
       });
 
       $('resetProfile').addEventListener('click', function () {
-        if (!window.confirm('센터 프로필을 기본값으로 되돌릴까요? 직접 추가한 금지어는 그대로 둡니다.')) return;
-        state.profile = {};
-        Object.keys(DEFAULTS).forEach(function (k) { state.profile[k] = DEFAULTS[k]; });
-        writeJSON(LS_PROFILE, state.profile);
+        var ind = IND[state.industry];
+        if (!window.confirm('‘' + ind.label + '’ 프로필을 기본값으로 되돌릴까요? 직접 추가한 금지어는 그대로 둡니다.')) return;
+        var prof = {};
+        Object.keys(ind.defaults).forEach(function (k) { prof[k] = ind.defaults[k]; });
+        state.profiles[state.industry] = prof;
+        save();
         fillProfileInputs();
         refresh();
         toast('프로필을 기본값으로 되돌렸습니다.');
@@ -1657,9 +2239,10 @@ const FCS = (function () {
         if (!b) return;
         var i = parseInt(b.getAttribute('data-index'), 10);
         if (isNaN(i)) return;
-        var removed = state.banned[i];
-        state.banned.splice(i, 1);
-        writeJSON(LS_BANNED, state.banned);
+        var list = state.banned[state.industry];
+        var removed = list[i];
+        list.splice(i, 1);
+        save();
         refresh();
         if (removed) toast('‘' + removed.word + '’ 규칙을 지웠습니다.');
       });
@@ -1687,11 +2270,21 @@ const FCS = (function () {
         if (e.key === 'Home') { e.preventDefault(); selectTab(TABS[0]); $('tab-blog').focus(); }
         if (e.key === 'End') { e.preventDefault(); selectTab(TABS[2]); $('tab-place').focus(); }
       });
+
+      var indTabs = $('indTabs');
+      if (indTabs) {
+        indTabs.addEventListener('keydown', function (e) {
+          var i = KEYS.indexOf(state.industry);
+          if (e.key === 'ArrowRight') { e.preventDefault(); var n = KEYS[(i + 1) % 3]; setIndustry(n); $('ind-' + n).focus(); }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); var p = KEYS[(i + 2) % 3]; setIndustry(p); $('ind-' + p).focus(); }
+        });
+      }
     }
 
     /* ---------- 시작 ---------- */
     loadStored();
     fillProfileInputs();
+    syncIndustryUI();
     renderDict();
     bind();
     selectTab('blog');
@@ -1699,19 +2292,34 @@ const FCS = (function () {
 
     /* 첫 방문이면 예시로 바로 보여 준다 */
     try {
-      if (!window.localStorage.getItem('fcs.seen.v1') && !$('memo').value.trim()) {
-        $('memo').value = EXAMPLE.memo;
-        $('topic').value = EXAMPLE.topic;
-        window.localStorage.setItem('fcs.seen.v1', '1');
+      if (!window.localStorage.getItem(LS.seen) && !$('memo').value.trim()) {
+        var ind = IND[state.industry];
+        $('memo').value = ind.example.memo;
+        $('topic').value = ind.example.topic;
+        window.localStorage.setItem(LS.seen, '1');
         refresh();
       }
     } catch (e) {}
   }
 
-  const api = {
-    DEFAULTS: DEFAULTS,
-    EXAMPLE: EXAMPLE,
-    RULES: RULES,
+  /* =========================================================
+     10. 바깥에 내보내는 API (테스트용 포함)
+     ========================================================= */
+  /* 업종 정의에 기본 토픽 문구를 붙인다 */
+  IND.gym.fallbackTopic = '오늘의 운동 이야기';
+  IND.food.fallbackTopic = '오늘의 메뉴 이야기';
+  IND.pub.fallbackTopic = '오늘의 한 잔 이야기';
+
+  var api = {
+    INDUSTRIES: IND,
+    INDUSTRY_KEYS: KEYS,
+    DEFAULT_INDUSTRY: DEFAULT_INDUSTRY,
+    DEFAULTS: IND[DEFAULT_INDUSTRY].defaults,
+    EXAMPLE: IND[DEFAULT_INDUSTRY].example,
+    RULES: GYM_RULES,
+    defaultsFor: function (k) { return (IND[k] || IND[DEFAULT_INDUSTRY]).defaults; },
+    exampleFor: function (k) { return (IND[k] || IND[DEFAULT_INDUSTRY]).example; },
+    rulesFor: function (k) { return (IND[k] || IND[DEFAULT_INDUSTRY]).rules; },
     compileRules: compileRules,
     findMatches: findMatches,
     sanitize: sanitize,
@@ -1719,6 +2327,7 @@ const FCS = (function () {
     altFor: altFor,
     resolveAlt: resolveAlt,
     wordBody: wordBody,
+    josa: josa,
     deriveTopic: deriveTopic,
     analyze: analyze,
     buildTags: buildTags,
@@ -1727,6 +2336,7 @@ const FCS = (function () {
     placeText: placeText,
     checklist: checklist,
     countTags: countTags,
+    wordCount: wordCount,
     prepare: prepare
   };
 
