@@ -1,0 +1,1743 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>피트니스 글 변환기 &amp; 금지어 필터 | 무료 웹툴</title>
+<style>
+  :root{
+    --ink:#0b1220;
+    --ink-2:#1c2a44;
+    --muted:#5b6678;
+    --soft:#8a95a8;
+    --line:#e3e7ee;
+    --line-2:#dde3ec;
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --volt:#d8ff3e;
+    --danger:#d7263d;
+    --warn:#b45309;
+    --ok:#0f8a5f;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(11,18,32,.04), 0 10px 26px -16px rgba(11,18,32,.28);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    -webkit-text-size-adjust:100%;
+  }
+  h1,h2,h3,p,ul,ol{margin:0}
+  button{font-family:inherit}
+
+  /* ---------- 상단 바 ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    background:linear-gradient(180deg,#0b1220,#0f1a2e);
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .topbar-in{
+    max-width:1280px; margin:0 auto; padding:11px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .brand{display:flex; align-items:center; gap:11px; min-width:0}
+  .brandmark{
+    width:36px; height:36px; flex:0 0 36px; border-radius:11px;
+    background:var(--volt); color:#0b1220;
+    display:grid; place-items:center;
+    font-weight:800; font-size:12.5px; letter-spacing:.02em;
+  }
+  .brand-txt{min-width:0}
+  .brand-txt h1{font-size:15.5px; font-weight:800; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .brand-txt p{font-size:11.5px; color:rgba(255,255,255,.55); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .topbar-pills{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+  .pill{
+    font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.78); white-space:nowrap;
+  }
+  .pill.volt{background:var(--volt); color:#0b1220; border-color:var(--volt)}
+
+  /* ---------- 레이아웃 ---------- */
+  .wrap{
+    max-width:1280px; margin:0 auto; padding:20px 20px 40px;
+    display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:16px; align-items:start;
+  }
+  .col{display:grid; gap:14px; min-width:0}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:16px; min-width:0;
+  }
+  .card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:12px}
+  .card-head h2{font-size:15px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:7px}
+  .hint{font-size:12px; color:var(--muted); margin-top:3px; font-weight:500}
+  .soft{font-size:12px; color:var(--soft); font-weight:600}
+
+  /* ---------- 입력 ---------- */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px 12px}
+  .field{display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--muted); font-weight:700; min-width:0}
+  .field.span2{grid-column:1 / -1}
+  .field em{font-style:normal; font-weight:500; color:#9aa6b8}
+  input[type="text"],input[type="password"],textarea{
+    width:100%; font-family:inherit; color:var(--ink); background:#fff;
+    border:1px solid var(--line-2); border-radius:10px; padding:9px 11px;
+    font-size:14.5px; line-height:1.5;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="text"]:focus,input[type="password"]:focus,textarea:focus{
+    outline:none; border-color:var(--ink); box-shadow:0 0 0 3px rgba(11,18,32,.10);
+  }
+  textarea{resize:vertical; line-height:1.8; min-height:150px}
+  .row-btns{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+
+  /* ---------- 버튼 ---------- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border:1px solid transparent; border-radius:10px; padding:9px 14px;
+    font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+    transition:transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(11,18,32,.2)}
+  .btn-primary{background:var(--ink); color:#fff}
+  .btn-primary:hover{background:var(--ink-2)}
+  .btn-volt{background:var(--volt); color:#0b1220}
+  .btn-volt:hover{filter:brightness(.96)}
+  .btn-ghost{background:#fff; border-color:var(--line-2); color:var(--ink)}
+  .btn-ghost:hover{border-color:#b9c4d4; background:#fafbfe}
+  .btn-xs{padding:6px 10px; font-size:12px; border-radius:8px}
+  .btn-sm{padding:7px 12px; font-size:12.5px; border-radius:9px}
+  .btn[disabled]{opacity:.45; cursor:not-allowed}
+  .btn.done{background:var(--ok); color:#fff; border-color:var(--ok)}
+
+  /* ---------- 배지 ---------- */
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12px; font-weight:800; padding:4px 9px; border-radius:999px;
+    border:1px solid transparent; white-space:nowrap;
+  }
+  .badge-ok{background:#e9f9f1; color:#0b6b4a; border-color:#bfe9d6}
+  .badge-risk{background:#fff0f3; color:#a4122b; border-color:#ffd0d9}
+  .badge-warn{background:#fff8e6; color:#8a5300; border-color:#ffe3a3}
+  .badge-neutral{background:#f1f4f9; color:#5b6678; border-color:#e2e7ef}
+
+  /* ---------- 하이라이트 미리보기 ---------- */
+  .preview{
+    background:#fcfdff; border:1px solid var(--line); border-radius:12px;
+    padding:12px 13px; font-size:14px; line-height:1.85;
+    max-height:232px; overflow:auto; white-space:pre-wrap; word-break:break-word;
+    min-height:66px;
+  }
+  .preview.empty{display:flex; align-items:center; color:#9aa6b8; font-size:13px; line-height:1.6}
+  mark{background:transparent; padding:1px 3px; border-radius:5px; font-weight:800; cursor:help}
+  mark.risk{background:#ffe1e7; color:#a4122b; box-shadow:inset 0 -2px 0 #f2a2b3}
+  mark.warn{background:#fff1c9; color:#8a5300; box-shadow:inset 0 -2px 0 #eabf62}
+  mark.custom{background:#e6e9ff; color:#3730a3; box-shadow:inset 0 -2px 0 #b9bcf5}
+
+  .auto-info{
+    margin-top:9px; font-size:12px; color:#4b5871; line-height:1.6;
+    background:#f6f8fc; border:1px dashed #cfd8e6; border-radius:10px; padding:8px 10px;
+  }
+
+  /* ---------- 감지 목록 ---------- */
+  .hits{display:grid; gap:8px; margin-top:12px}
+  .hit{
+    display:grid; gap:6px; padding:10px 11px;
+    border:1px solid var(--line); border-radius:11px; background:#fcfdff;
+  }
+  .hit-top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .dot{width:7px; height:7px; border-radius:50%; display:inline-block; flex:0 0 7px}
+  .dot.risk{background:var(--danger)}
+  .dot.warn{background:#d99400}
+  .dot.custom{background:#4f46e5}
+  .hit-word{font-size:13.5px; font-weight:800; color:var(--ink)}
+  .hit-count{font-size:11.5px; color:var(--soft); font-weight:700}
+  .hit-why{font-size:12px; color:var(--muted); line-height:1.6}
+  .alts{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px}
+  .chip{
+    font-family:inherit; font-size:12px; font-weight:700; padding:4px 9px;
+    border-radius:999px; border:1px dashed #b9c4d4; background:#fff; color:#22304a;
+    cursor:pointer; transition:background .13s, color .13s, border-color .13s;
+  }
+  .chip:hover{background:var(--ink); color:#fff; border-color:var(--ink); border-style:solid}
+  .chip.del{color:#a4122b; border-color:#ffd0d9}
+  .chip.del:hover{background:#a4122b; border-color:#a4122b}
+  .empty-ok{
+    margin-top:11px; font-size:12.5px; font-weight:700; color:#0b6b4a;
+    background:#e9f9f1; border:1px solid #bfe9d6; border-radius:10px; padding:10px 12px;
+  }
+
+  /* ---------- 직접 추가 ---------- */
+  .custom-wrap{margin-top:14px; padding-top:13px; border-top:1px solid var(--line)}
+  .custom-wrap h3{font-size:12.5px; font-weight:800; color:var(--ink); margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px}
+  .tag{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12px; font-weight:700; padding:4px 5px 4px 10px;
+    border-radius:999px; background:#eef1f7; color:#22304a; border:1px solid #e2e7ef;
+  }
+  .tag button{
+    border:0; background:#d7ddea; color:#404c63; border-radius:50%;
+    width:17px; height:17px; line-height:1; font-size:11px; cursor:pointer; display:grid; place-items:center;
+  }
+  .tag button:hover{background:#a4122b; color:#fff}
+
+  /* ---------- 사전 ---------- */
+  .dict{margin-top:12px; border-top:1px solid var(--line); padding-top:12px}
+  .dict summary{
+    cursor:pointer; font-size:12.5px; font-weight:800; color:#3b475c;
+    display:flex; align-items:center; justify-content:space-between; gap:8px; list-style:none;
+  }
+  .dict summary::-webkit-details-marker{display:none}
+  .dict summary::after{content:"▾"; color:#8a95a8; font-size:11px}
+  .dict[open] summary::after{transform:rotate(180deg)}
+  .dict-row{padding:9px 0; border-bottom:1px dashed #edf0f6}
+  .dict-row:last-child{border-bottom:0}
+  .dict-head{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:4px}
+  .dict-cat{font-size:11px; font-weight:700; color:var(--soft)}
+  .dict-words{font-size:12.5px; color:#22304a; line-height:1.9}
+  .dict-words code{
+    font-family:inherit; font-weight:700; background:#f1f4f9; border-radius:5px; padding:1px 5px; margin-right:3px;
+    display:inline-block;
+  }
+  .dict-alt{font-size:11.5px; color:var(--muted); margin-top:3px}
+
+  /* ---------- 탭 ---------- */
+  .tabbar{
+    display:flex; gap:4px; padding:4px; background:#eef1f7; border-radius:12px;
+    overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .tabbar::-webkit-scrollbar{display:none}
+  .tab{
+    flex:1 1 0; min-width:104px; border:0; background:transparent;
+    font-family:inherit; font-size:13px; font-weight:800; color:#5b6678;
+    padding:9px 10px; border-radius:9px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    transition:background .15s, color .15s, box-shadow .15s;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(11,18,32,.14)}
+  .sdot{width:7px; height:7px; border-radius:50%; background:#c4cdda; flex:0 0 7px}
+  .sdot.good{background:#12a56e}
+  .sdot.bad{background:var(--danger)}
+  .tab .count{font-size:11px; font-weight:800; color:#93a0b4}
+  .tab[aria-selected="true"] .count{color:var(--ink)}
+
+  .convert-note{
+    margin-top:12px; font-size:12px; color:#4b5871; line-height:1.6;
+    background:#f6f8fc; border:1px dashed #cfd8e6; border-radius:10px; padding:8px 11px;
+  }
+
+  .out-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:13px 0 8px}
+  .out-meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--soft); font-weight:700}
+  textarea.out{
+    min-height:392px; background:#fcfdff; font-size:14.5px; line-height:1.9;
+    border-color:var(--line); padding:14px 15px;
+  }
+  textarea.out:focus{background:#fff}
+  .out-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .out-foot .group{display:flex; gap:8px; flex-wrap:wrap}
+  .checks{list-style:none; margin:10px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:5px 14px; font-size:12px; font-weight:600}
+  .checks li{display:flex; align-items:center; gap:4px}
+  .checks .ok{color:#0b6b4a}
+  .checks .no{color:#a4122b}
+
+  /* ---------- AI 서랍 ---------- */
+  .drawer{
+    border:1px solid var(--line); border-radius:var(--radius); background:#fff;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .drawer summary{
+    cursor:pointer; padding:14px 16px; font-size:13.5px; font-weight:800;
+    display:flex; align-items:center; justify-content:space-between; gap:10px; list-style:none;
+  }
+  .drawer summary::-webkit-details-marker{display:none}
+  .drawer summary .sum-left{display:flex; align-items:center; gap:8px}
+  .drawer summary::after{content:"▾"; color:#8a95a8; font-size:11px; transition:transform .15s}
+  .drawer[open] summary::after{transform:rotate(180deg)}
+  .drawer-body{padding:2px 16px 16px; border-top:1px solid var(--line); font-size:13px; color:#3b475c}
+  .drawer-body p{margin:11px 0; line-height:1.7}
+  .drawer-body strong{color:var(--ink)}
+  .ai-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-top:6px}
+  .note{
+    background:#f6f8fc; border:1px dashed #cfd8e6; border-radius:10px;
+    padding:10px 12px; font-size:12.5px; color:#4b5871; line-height:1.6;
+  }
+  .note b{color:var(--ink)}
+
+  /* ---------- 푸터 / 토스트 ---------- */
+  .foot{
+    max-width:1280px; margin:0 auto; padding:0 20px 44px;
+    color:#8894a8; font-size:12px; line-height:1.8;
+  }
+  .foot b{color:#4b5871}
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translate(-50%,14px);
+    background:var(--ink); color:#fff; font-size:13px; font-weight:700;
+    padding:10px 18px; border-radius:999px;
+    box-shadow:0 14px 34px -10px rgba(11,18,32,.55);
+    opacity:0; pointer-events:none; z-index:70;
+    max-width:min(92vw,540px); text-align:center; line-height:1.5;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+
+  /* ---------- 반응형 ---------- */
+  @media (max-width: 1000px){
+    .wrap{grid-template-columns:minmax(0,1fr); padding:16px 14px 32px}
+    textarea.out{min-height:330px}
+  }
+  @media (max-width: 640px){
+    body{font-size:14.5px}
+    .topbar-in{padding:10px 14px}
+    .brandmark{width:32px; height:32px; flex-basis:32px; border-radius:10px; font-size:11.5px}
+    .brand-txt h1{font-size:14.5px}
+    .brand-txt p{font-size:11px}
+    .topbar-pills .pill:not(.volt){display:none}
+    .grid2{grid-template-columns:1fr}
+    .field.span2{grid-column:auto}
+    input[type="text"],input[type="password"],textarea{font-size:16px}
+    textarea.out{min-height:300px; font-size:15px}
+    .tab{font-size:12.5px; min-width:96px; padding:9px 8px}
+    .card{padding:14px}
+    .foot{padding:0 14px 36px}
+    .ai-grid{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important}
+  }
+  @media print{
+    .topbar,.out-foot,.row-btns,.tabbar,.drawer,.foot,.toast{display:none !important}
+    body{background:#fff}
+    .wrap{display:block; padding:0}
+    .card{box-shadow:none; border:0; padding:0}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="brandmark" aria-hidden="true">FCS</div>
+        <div class="brand-txt">
+          <h1>피트니스 글 변환기 &amp; 금지어 필터</h1>
+          <p>메모 하나로 블로그 · 인스타 · 스마트플레이스 문구까지</p>
+        </div>
+      </div>
+      <div class="topbar-pills">
+        <span class="pill volt">API 키 없이 바로 동작</span>
+        <span class="pill">100% 오프라인 · 단일 파일</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ============ 왼쪽: 입력 ============ -->
+    <div class="col">
+
+      <section class="card" aria-labelledby="profileTitle">
+        <div class="card-head">
+          <div>
+            <h2 id="profileTitle">센터 프로필</h2>
+            <p class="hint">한 번 입력하면 이 브라우저에 저장되어 다음에도 그대로 씁니다.</p>
+          </div>
+          <button type="button" class="btn btn-ghost btn-xs" id="resetProfile">기본값</button>
+        </div>
+        <div class="grid2">
+          <label class="field" for="pCenter"><span>센터명</span>
+            <input type="text" id="pCenter" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field" for="pBrand"><span>브랜드 태그 <em>선택</em></span>
+            <input type="text" id="pBrand" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field span2" for="pRegion"><span>지역 키워드 <em>쉼표로 구분 · 제목·태그에 자동 배치</em></span>
+            <input type="text" id="pRegion" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field" for="pHours"><span>영업시간</span>
+            <input type="text" id="pHours" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field" for="pPhone"><span>문의 연락처</span>
+            <input type="text" id="pPhone" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field span2" for="pAbout"><span>매장 특장점·주소 한 줄</span>
+            <input type="text" id="pAbout" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field span2" for="pSlogan"><span>한 줄 슬로건 <em>선택</em></span>
+            <input type="text" id="pSlogan" autocomplete="off" spellcheck="false">
+          </label>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="memoTitle">
+        <div class="card-head">
+          <div>
+            <h2 id="memoTitle">원고 입력</h2>
+            <p class="hint">릴스 대본, 대충 적은 메모, 회원 상담 메모 무엇이든 좋습니다.</p>
+          </div>
+        </div>
+        <label class="field" for="topic" style="margin-bottom:10px"><span>주제·제목 키워드 <em>선택 (비우면 첫 문장에서 자동 추출)</em></span>
+          <input type="text" id="topic" autocomplete="off" spellcheck="false" placeholder="예: 롱풀 자세, 허리 대신 등으로 당기는 법">
+        </label>
+        <label class="field" for="memo"><span>메모 / 릴스 대본</span>
+          <textarea id="memo" spellcheck="false" placeholder="오늘 찍은 릴스 내용이나 회원에게 설명한 내용을 편하게 적어 주세요.&#10;번호를 붙인 줄은 '핵심 포인트'로, 마지막 문의 안내 문장은 '마무리'로 자동 분류됩니다."></textarea>
+        </label>
+        <div class="row-btns">
+          <button type="button" class="btn btn-volt" id="loadExample">예시 원고 불러오기</button>
+          <button type="button" class="btn btn-ghost" id="clearMemo">지우기</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="filterTitle">
+        <div class="card-head">
+          <div>
+            <h2 id="filterTitle">금지어 필터</h2>
+            <p class="hint">의료법·표시광고법 소지 표현을 실시간으로 표시합니다.</p>
+          </div>
+          <span class="badge badge-neutral" id="badgeFilter" aria-live="polite">대기</span>
+        </div>
+
+        <div class="preview empty" id="preview">원고를 입력하면 위험 표현이 여기에 표시됩니다.</div>
+        <div class="auto-info" id="autoInfo">발행용 문구는 위험 표현을 안전한 표현으로 자동 치환해 만듭니다.</div>
+
+        <div class="hits" id="hitList"></div>
+
+        <div class="row-btns">
+          <button type="button" class="btn btn-primary" id="bulkFix" disabled>안전 표현으로 일괄 치환</button>
+        </div>
+
+        <div class="custom-wrap">
+          <h3>내 금지어 추가</h3>
+          <div class="grid2">
+            <label class="field" for="customWord"><span>금지어</span>
+              <input type="text" id="customWord" autocomplete="off" spellcheck="false" placeholder="예: 다이어트 보장">
+            </label>
+            <label class="field" for="customAlt"><span>대체 표현 <em>선택</em></span>
+              <input type="text" id="customAlt" autocomplete="off" spellcheck="false" placeholder="예: 체중 관리">
+            </label>
+          </div>
+          <div class="row-btns">
+            <button type="button" class="btn btn-ghost btn-sm" id="addCustom">추가</button>
+          </div>
+          <div class="chips" id="customList"></div>
+        </div>
+
+        <details class="dict" id="dictDetails">
+          <summary>내장 금지어 사전 <span id="dictCount"></span>개 표현 보기</summary>
+          <div id="dictBody"></div>
+        </details>
+      </section>
+    </div>
+
+    <!-- ============ 오른쪽: 출력 ============ -->
+    <div class="col">
+      <section class="card" aria-labelledby="outTitle">
+        <div class="card-head">
+          <div>
+            <h2 id="outTitle">채널별 문구</h2>
+            <p class="hint">문구는 직접 고쳐도 됩니다. 원고를 고치면 수정 전 상태로 다시 만들어집니다.</p>
+          </div>
+        </div>
+
+        <div class="tabbar" role="tablist" aria-label="채널 선택">
+          <button type="button" class="tab" role="tab" id="tab-blog" aria-selected="true" aria-controls="panel-blog" tabindex="0">
+            <span class="sdot" id="dot-blog"></span>네이버 블로그<span class="count" id="count-blog">0</span>
+          </button>
+          <button type="button" class="tab" role="tab" id="tab-ig" aria-selected="false" aria-controls="panel-ig" tabindex="-1">
+            <span class="sdot" id="dot-ig"></span>인스타그램<span class="count" id="count-ig">0</span>
+          </button>
+          <button type="button" class="tab" role="tab" id="tab-place" aria-selected="false" aria-controls="panel-place" tabindex="-1">
+            <span class="sdot" id="dot-place"></span>스마트플레이스<span class="count" id="count-place">0</span>
+          </button>
+        </div>
+
+        <div class="convert-note" id="convertNote">원고를 입력하거나 예시를 불러오면 3개 채널 문구가 자동으로 만들어집니다.</div>
+
+        <!-- 블로그 -->
+        <section id="panel-blog" role="tabpanel" aria-labelledby="tab-blog" tabindex="0">
+          <div class="out-head">
+            <div class="out-meta">
+              <span class="badge badge-neutral" id="badge-blog" aria-live="polite">대기</span>
+              <span id="len-blog">0자</span>
+            </div>
+            <span class="soft">제목 3안 · 본문 · 태그 20~24개</span>
+          </div>
+          <textarea class="out" id="out-blog" spellcheck="false" placeholder="원고를 입력하면 블로그 원고가 만들어집니다."></textarea>
+          <div class="out-foot">
+            <div class="group">
+              <button type="button" class="btn btn-primary" id="copy-blog" data-target="out-blog" disabled>복사하기</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="regen-blog">다시 생성</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="fix-blog" hidden>안전 표현으로 치환</button>
+            </div>
+            <span class="soft" id="mode-blog"></span>
+          </div>
+          <ul class="checks" id="checks-blog"></ul>
+        </section>
+
+        <!-- 인스타그램 -->
+        <section id="panel-ig" role="tabpanel" aria-labelledby="tab-ig" tabindex="0" hidden>
+          <div class="out-head">
+            <div class="out-meta">
+              <span class="badge badge-neutral" id="badge-ig" aria-live="polite">대기</span>
+              <span id="len-ig">0자</span>
+              <span id="tagcount-ig">0 / 24</span>
+            </div>
+            <span class="soft">첫 줄 훅 · 짧은 줄바꿈 · 해시태그 24개</span>
+          </div>
+          <textarea class="out" id="out-ig" spellcheck="false" placeholder="원고를 입력하면 인스타그램 캡션이 만들어집니다."></textarea>
+          <div class="out-foot">
+            <div class="group">
+              <button type="button" class="btn btn-primary" id="copy-ig" data-target="out-ig" disabled>복사하기</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="regen-ig">다시 생성</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="fix-ig" hidden>안전 표현으로 치환</button>
+            </div>
+            <span class="soft"><span id="mode-ig"></span>해시태그 24개를 넘으면 인스타 웹 저장이 거부될 수 있습니다.</span>
+          </div>
+          <ul class="checks" id="checks-ig"></ul>
+        </section>
+
+        <!-- 스마트플레이스 -->
+        <section id="panel-place" role="tabpanel" aria-labelledby="tab-place" tabindex="0" hidden>
+          <div class="out-head">
+            <div class="out-meta">
+              <span class="badge badge-neutral" id="badge-place" aria-live="polite">대기</span>
+              <span id="len-place">0자</span>
+            </div>
+            <span class="soft">짧은 공지 · 핵심 혜택 · 문의 안내</span>
+          </div>
+          <textarea class="out" id="out-place" spellcheck="false" placeholder="원고를 입력하면 스마트플레이스 소식이 만들어집니다."></textarea>
+          <div class="out-foot">
+            <div class="group">
+              <button type="button" class="btn btn-primary" id="copy-place" data-target="out-place" disabled>복사하기</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="regen-place">다시 생성</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="fix-place" hidden>안전 표현으로 치환</button>
+            </div>
+            <span class="soft"><span id="mode-place"></span>소식 본문은 600자 이내를 권장합니다.</span>
+          </div>
+          <ul class="checks" id="checks-place"></ul>
+        </section>
+      </section>
+
+      <details class="drawer" id="aiDrawer">
+        <summary>
+          <span class="sum-left">AI API 키 연결 <span class="badge badge-neutral">선택 · 지금은 꺼짐</span></span>
+        </summary>
+        <div class="drawer-body">
+          <p><strong>지금 이 도구는 AI 없이도 완전히 동작합니다.</strong> 내장 금지어 사전과 규칙 기반 문장 조립만으로 블로그·인스타·플레이스 문구를 만들기 때문에, 인터넷이 끊겨도 파일 하나만 열면 바로 씁니다.</p>
+          <p>AI를 붙이면 문장이 더 매끄러워지는 정도의 업그레이드입니다. 아래는 나중에 키를 연결할 자리를 미리 만들어 둔 것이고, <b>이 프로토타입에서는 키를 전송하지도 저장하지도 않습니다.</b></p>
+          <div class="ai-grid">
+            <label class="field" for="aiProvider"><span>제공자</span>
+              <input type="text" id="aiProvider" value="OpenAI / Anthropic / Google" readonly>
+            </label>
+            <label class="field" for="aiKey"><span>API 키 <em>저장 안 됨</em></span>
+              <input type="password" id="aiKey" autocomplete="off" placeholder="sk-...">
+            </label>
+          </div>
+          <div class="row-btns">
+            <button type="button" class="btn btn-ghost" id="aiTry" disabled>AI로 다듬기 (v2 예정)</button>
+          </div>
+          <p class="note" style="margin-top:12px"><b>참고:</b> 실제 연결은 서버나 개인 키 보관이 필요합니다. 공용 PC나 남에게 보낼 파일에는 키를 넣지 마세요.</p>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <p><b>피트니스 글 변환기 v0.1 (프로토타입)</b> · 단일 HTML 파일 · 외부 라이브러리 없음 · 입력값은 이 브라우저의 localStorage에만 저장됩니다.</p>
+    <p>금지어 판정은 일반적인 의료법·표시광고법 해석을 참고한 보조 도구입니다. 최종 판단과 책임은 센터에 있으며, 개별 문구는 필요 시 전문가 검토를 권합니다.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<noscript>
+  <p style="padding:20px;font-family:sans-serif">이 도구는 자바스크립트가 필요합니다. 브라우저에서 자바스크립트를 켜 주세요.</p>
+</noscript>
+
+<script>
+const FCS = (function () {
+  'use strict';
+
+  /* =========================================================
+     1. 기본값
+     ========================================================= */
+  const DEFAULTS = {
+    center: 'OO피트니스',
+    brand: 'OO FITNESS',
+    region: '강남pt, 강남헬스, 역삼pt, 역삼헬스',
+    hours: '06:00 - 23:00',
+    about: '서울시 OO구 OO로 00 · 100평대 · 머신 30여 종 · 개별 샤워실 · 주차 가능',
+    phone: '000-0000-0000',
+    slogan: '한 사람의 몸에 맞춘 운동'
+  };
+
+  const EXAMPLE = {
+    topic: '롱풀 자세, 허리 대신 등으로 당기는 법',
+    memo: [
+      '오늘은 롱풀(랫풀다운) 자세 하나만 짚고 갑니다.',
+      '등 운동인데 팔만 아프고 허리가 먼저 아픈 분들 많으시죠. 대부분 당기는 힘보다 몸통 세팅 문제입니다.',
+      '1) 시작 전 갈비뼈를 아래로 닫고 골반을 세웁니다.',
+      '2) 당길 때 어깨가 올라가지 않게, 날개뼈는 뒤·아래로.',
+      '3) 돌려보낼 때 팔을 길게 뻗어 등이 늘어나는 감각까지 확인합니다.',
+      '4) 허리를 젖히거나 반동 없이 8~12회 천천히.',
+      '허리 통증 치료나 재활운동을 생각하고 오시는 분들도 많은데, 저희는 평일 늦은 시간까지 운영 중이고 한 분 한 분 맞춤으로 봐 드립니다.',
+      '강남pt 역삼pt 찾으시면 편하게 문의 주세요. 롱풀 하나만 제대로 배워도 등 운동이 달라집니다.'
+    ].join('\n')
+  };
+
+  const DEFAULT_TARGETS = [
+    '혼자 운동하다 감이 안 잡히는 분',
+    '운동은 하는데 자극이 어디로 가는지 모르겠는 분',
+    '원리부터 이해하고 운동하고 싶은 분'
+  ];
+
+  const GENERIC_TAGS = [
+    '헬스장추천', '운동루틴', '코어운동', '기능해부학', '운동역학', '자세관리',
+    '체형관리', '근력운동', '운동정보', '운동초보', '운동습관', '헬스타그램',
+    '오운완', '운동기록', 'PT', '헬스'
+  ];
+
+  const STOP_TOKENS = [
+    '대해', '대한', '이야기', '오늘', '이번', '정리', '방법', '이렇게', '그렇게',
+    '그리고', '하지만', '위한', '하는', '있는', '없는', '합니다', '입니다', '갑니다',
+    '보겠습니다', '때문에', '정도', '경우', '하나만', '자세히', '이거', '저거'
+  ];
+
+  /* =========================================================
+     2. 내장 금지어 사전
+     ========================================================= */
+  const RULES = [
+    {
+      id: 'rehab', sev: 'risk', cat: '의료법',
+      why: '의료 행위로 읽힐 수 있습니다(무면허 의료행위). 운동 서비스에서는 컨디셔닝·움직임 개선으로 표현합니다.',
+      words: ['재활운동', '재활PT', '재활'],
+      alts: ['컨디셔닝', '움직임 개선', '기능성 트레이닝']
+    },
+    {
+      id: 'treat', sev: 'risk', cat: '의료법',
+      why: '치료·진단·처방은 의료인의 영역입니다. 케어·관리·체크 같은 표현으로 바꿉니다.',
+      words: ['치료', '완치', '진단', '처방'],
+      alts: ['케어', '관리', '체크', '운동 루틴']
+    },
+    {
+      id: 'pain', sev: 'risk', cat: '의료법·표시광고',
+      why: '질환명을 단정하거나 개선을 약속하면 의료법·표시광고법 위반 소지가 있습니다.',
+      words: ['통증 치료', '통증 개선', '허리디스크', '목디스크', '디스크', '측만증 교정'],
+      alts: ['불편감 완화 움직임', '밸런스 트레이닝', '바른 정렬 운동']
+    },
+    {
+      id: 'hours', sev: 'warn', cat: '영업시간·시설 표기',
+      why: '실제 운영과 다른 24시간·연중무휴 표기는 허위 표시가 될 수 있습니다. 실제 영업시간으로 적습니다.',
+      words: ['24시간 연중무휴', '연중무휴 24시간', '24시간 운영', '24시간', '24시', '연중무휴'],
+      alts: ['매일 {hours}', '{hours} 운영', '편한 시간에']
+    },
+    {
+      id: 'ad', sev: 'warn', cat: '표시광고법',
+      why: '최상급·보장 표현은 객관적 근거가 없으면 부당 표시가 됩니다. 담백한 표현으로 바꿉니다.',
+      words: ['확실한 감량', '다이어트 보장', '감량 보장', '부작용 없음', '만병통치', '특효',
+              '국내 최초', '업계 최초', '업계 1위', '최저가', '무조건', '100%', '최고', '유일'],
+      alts: ['개인 맞춤', '체계적인', '꾸준한']
+    },
+    {
+      id: 'posture', sev: 'warn', cat: '의료법·표시광고',
+      why: '교정·치료성 표현 대신 관리·정렬 운동으로 표현합니다.',
+      words: ['체형교정', '자세교정', '거북목 교정', '척추 교정', '오다리 교정'],
+      alts: ['체형 관리', '자세 관리', '정렬 운동']
+    }
+  ];
+
+  /* =========================================================
+     3. 유틸
+     ========================================================= */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function escRe(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function wordBody(word) {
+    return Array.from(String(word)).map(escRe).join('\\s*');
+  }
+
+  function normalizeText(s) {
+    return String(s == null ? '' : s).replace(/\r\n?/g, '\n');
+  }
+
+  function short(text, n) {
+    var s = String(text == null ? '' : text).replace(/\s+/g, ' ').trim();
+    if (s.length <= n) return s;
+    var cut = s.slice(0, n);
+    var sp = cut.lastIndexOf(' ');
+    if (sp > n * 0.6) cut = cut.slice(0, sp);
+    return cut.replace(/[.,·\/]+$/, '') + '…';
+  }
+
+  function wrap(text, width) {
+    var s = String(text == null ? '' : text).replace(/\s+/g, ' ').trim();
+    if (!s) return [];
+    if (s.length <= width) return [s];
+    var out = [], line = '';
+    s.split(' ').forEach(function (w) {
+      if (!line) { line = w; return; }
+      if ((line + ' ' + w).length <= width) { line += ' ' + w; }
+      else { out.push(line); line = w; }
+    });
+    if (line) out.push(line);
+    return out;
+  }
+
+  function uniquePush(arr, val) {
+    if (!val) return;
+    var k = String(val).toLowerCase();
+    if (!arr.some(function (x) { return x.toLowerCase() === k; })) arr.push(val);
+  }
+
+  // 받침 유무(한글 음절). 한글이 아니면 -1
+  function jongseong(ch) {
+    if (!ch) return -1;
+    var code = ch.charCodeAt(0);
+    if (code < 0xAC00 || code > 0xD7A3) return -1;
+    return (code - 0xAC00) % 28;
+  }
+
+  // 치환된 단어 뒤에 붙은 조사를 받침에 맞게 고쳐 준다 (치료나 → 움직임이나)
+  var PARTICLE_BASE = {
+    '이나': '나', '나': '나', '은': '는', '는': '는', '을': '를', '를': '를',
+    '이': '가', '가': '가', '과': '와', '와': '와', '으로': '로', '로': '로'
+  };
+  var PARTICLE_PLAIN = { '나': '나', '는': '는', '를': '를', '가': '가', '와': '와', '로': '로' };
+  var PARTICLE_BATCHIM = { '나': '이나', '는': '은', '를': '을', '가': '이', '와': '과', '로': '으로' };
+
+  // 이름 뒤 조사: 받침이 있으면 withB, 없으면 withoutB (한글 아닌 글자로 끝나면 '은(는)' 형태)
+  function josa(name, withB, withoutB) {
+    var j = jongseong(String(name || '').slice(-1));
+    if (j < 0) return withB + '(' + withoutB + ')';
+    return j === 0 ? withoutB : withB;
+  }
+
+  function fixParticle(alt, rest) {
+    var out = { text: alt, consumed: 0 };
+    if (!alt) return out;
+    var j = jongseong(alt.slice(-1));
+    if (j < 0) {
+      // 시간·숫자로 끝나는 치환 뒤의 '로'는 '까지'가 자연스럽다 (05:00 - 24:00까지)
+      if (/\d$/.test(alt)) {
+        var t = rest.match(/^(으로|로)/);
+        if (t) { out.text = alt + '까지'; out.consumed = t[0].length; }
+      }
+      return out;
+    }
+    var m = rest.match(/^(이나|나|은|는|을|를|이|가|과|와|으로|로)/);
+    if (!m) return out;
+    var after = rest.slice(m[0].length);
+    if (/^[가-힣]/.test(after)) return out; // 조사가 아니라 단어의 일부
+    var base = PARTICLE_BASE[m[0]];
+    var needs = base === '로' ? (j !== 0 && j !== 8) : (j !== 0);
+    out.text = alt + (needs ? PARTICLE_BATCHIM[base] : PARTICLE_PLAIN[base]);
+    out.consumed = m[0].length;
+    return out;
+  }
+
+  // 문장 단위로 먼저 나눈 뒤 줄바꿈 (모바일 가독성)
+  function wrapPara(text, width) {
+    var src = String(text == null ? '' : text).replace(/\s+/g, ' ').trim();
+    if (!src) return [];
+    var parts = src.match(/[^.!?。]*[.!?。]+|[^.!?。]+$/g) || [src];
+    var out = [];
+    parts.forEach(function (p) {
+      wrap(p.trim(), width).forEach(function (l) { out.push(l); });
+    });
+    return out;
+  }
+
+  /* =========================================================
+     4. 사전 컴파일 & 탐지
+     ========================================================= */
+  function compileRules(customWords) {
+    var list = [];
+    RULES.forEach(function (r) {
+      r.words.forEach(function (w) {
+        list.push({
+          id: r.id, word: w, sev: r.sev, cat: r.cat, why: r.why,
+          alts: r.alts.slice(), custom: false
+        });
+      });
+    });
+    (customWords || []).forEach(function (c, i) {
+      var w = String((c && c.word) || '').trim();
+      if (!w) return;
+      var alt = String((c && c.alt) || '').trim();
+      list.push({
+        id: 'custom-' + i, word: w, sev: 'custom', cat: '직접 추가',
+        why: alt ? '내가 추가한 표현입니다. 대체 표현이 함께 적용됩니다.'
+                 : '내가 추가한 표현입니다. 대체 표현을 비워 두면 문장에서 지웁니다.',
+        alts: alt ? [alt] : [], custom: true
+      });
+    });
+
+    list.sort(function (a, b) { return b.word.length - a.word.length; });
+
+    var seen = {}, out = [];
+    list.forEach(function (r) {
+      var k = r.word.toLowerCase();
+      if (seen[k]) return;
+      seen[k] = true;
+      try { r.re = new RegExp(wordBody(r.word), 'gi'); }
+      catch (e) { r.re = new RegExp(escRe(r.word), 'gi'); }
+      out.push(r);
+    });
+    return out;
+  }
+
+  function findMatches(text, rules) {
+    var src = String(text == null ? '' : text);
+    if (!src) return [];
+    var raw = [];
+    (rules || []).forEach(function (r) {
+      if (!r.re) return;
+      r.re.lastIndex = 0;
+      var m;
+      while ((m = r.re.exec(src)) !== null) {
+        if (!m[0].length) { r.re.lastIndex++; continue; }
+        raw.push({ start: m.index, end: m.index + m[0].length, text: m[0], rule: r });
+      }
+      r.re.lastIndex = 0;
+    });
+    raw.sort(function (a, b) {
+      return a.start - b.start || (b.end - b.start) - (a.end - a.start);
+    });
+    var picked = [], end = -1;
+    raw.forEach(function (m) {
+      if (m.start >= end) { picked.push(m); end = m.end; }
+    });
+    return picked;
+  }
+
+  function resolveAlt(alt, profile) {
+    var hours = (profile && profile.hours) ? profile.hours : '운영시간';
+    return String(alt == null ? '' : alt).replace(/\{hours\}/g, hours);
+  }
+
+  function altFor(rule, index, profile) {
+    var alts = (rule && rule.alts) || [];
+    if (!alts.length) return '';
+    var i = Math.min(Math.max(index || 0, 0), alts.length - 1);
+    return resolveAlt(alts[i], profile);
+  }
+
+  function highlight(text, rules) {
+    var src = String(text == null ? '' : text);
+    var matches = findMatches(src, rules);
+    var out = '', pos = 0;
+    matches.forEach(function (m) {
+      out += esc(src.slice(pos, m.start));
+      var alts = (m.rule.alts || []).map(function (a) { return resolveAlt(a, null); });
+      var label = alts.length ? alts.join(' / ') : '삭제';
+      out += '<mark class="' + m.rule.sev + '" title="' + esc('추천: ' + label) + '">' +
+             esc(m.text) + '</mark>';
+      pos = m.end;
+    });
+    out += esc(src.slice(pos));
+    return out;
+  }
+
+  function sanitize(text, rules, profile, chooser) {
+    var src = String(text == null ? '' : text);
+    var matches = findMatches(src, rules);
+    var out = '', pos = 0, log = {}, order = [];
+    matches.forEach(function (m) {
+      out += src.slice(pos, m.start);
+      var idx = chooser ? (chooser(m) || 0) : 0;
+      var alts = m.rule.alts || [];
+      var alt = altFor(m.rule, idx, profile);
+
+      // 바로 앞에서 쓴 표현이면 다른 대체어를 고른다 (개인 맞춤 개인 맞춤 → 개인 맞춤 체계적인)
+      if (alts.length > 1 && alt.length >= 2 && out.slice(-24).indexOf(alt) !== -1) {
+        for (var k = 0; k < alts.length; k++) {
+          var cand = resolveAlt(alts[k], profile);
+          if (cand && out.slice(-24).indexOf(cand) === -1) { alt = cand; break; }
+        }
+      }
+
+      var fixed = fixParticle(alt, src.slice(m.end));
+      out += fixed.text;
+      pos = m.end + fixed.consumed;
+      var key = JSON.stringify([m.rule.id, m.rule.word, alt]);
+      if (!log[key]) { log[key] = { id: m.rule.id, word: m.rule.word, alt: alt, count: 0 }; order.push(key); }
+      log[key].count++;
+    });
+    out += src.slice(pos);
+    return {
+      text: out,
+      matches: matches,
+      log: order.map(function (k) { return log[k]; })
+    };
+  }
+
+  /* =========================================================
+     5. 원고 분석
+     ========================================================= */
+  function deriveTopic(memo) {
+    var items = parseMemo(memo);
+    var first = items.length ? items[0].text : '';
+    var t = first
+      .replace(/^(오늘은|오늘|이번엔|이번에는|자,|그래서|먼저|요즘|저희는|저희|우리는|우리)\s*/, '')
+      .split(/[.?!。]\s/)[0]
+      .replace(/\s*(하나만|한 가지만|딱 하나만)\s*(짚고|알려|보고)\s*(갑니다|드립니다|가겠습니다)[.!?]?$/, '')
+      .replace(/[.!?。]+$/, '')
+      .trim();
+
+    // 바로 앞 단어가 그대로 반복되면(치환 결과) 한 번만 남긴다
+    var words = t.split(/\s+/);
+    var dedup = [];
+    words.forEach(function (w) {
+      if (dedup[dedup.length - 1] !== w) dedup.push(w);
+    });
+    t = dedup.join(' ').replace(/\s*(운영 중입니다|중입니다|합니다|입니다|보장합니다|드립니다)$/, '').trim();
+
+    if (t.length > 28) t = t.slice(0, 28).replace(/\s+\S*$/, '') + '…';
+    return t || '오늘의 운동 이야기';
+  }
+
+  function parseMemo(text) {
+    var out = [];
+    normalizeText(text).split(/\n+/).forEach(function (raw) {
+      var t = raw.trim();
+      if (!t) return;
+      var m = t.match(/^(?:[-*•·>]+|\d+[.)]\s*|[①-⑩]|[✅✔️❌⭕]\s*)\s*/);
+      if (m) t = t.slice(m[0].length).trim();
+      if (t) out.push({ text: t, bullet: !!m });
+    });
+    return out;
+  }
+
+  function isCta(t) {
+    return /(문의|DM|디엠|궁금|편하게|들러|상담|연락|예약|찾으시면|오세요|주세요|기다리)/.test(t);
+  }
+
+  function analyze(memo) {
+    var items = parseMemo(memo);
+    var bullets = items.filter(function (i) { return i.bullet; }).map(function (i) { return i.text; });
+    var prose = items.filter(function (i) { return !i.bullet; }).map(function (i) { return i.text; });
+
+    var closingIdx = -1;
+    if (prose.length > 1 && isCta(prose[prose.length - 1])) closingIdx = prose.length - 1;
+    var closing = closingIdx >= 0 ? prose[closingIdx] : '';
+
+    var proseBody = closingIdx >= 0 ? prose.slice(0, closingIdx) : prose.slice();
+    var intro = proseBody.slice(0, 3).map(function (t) { return short(t, 180); });
+
+    var pointSrc = bullets.length ? bullets : proseBody.slice(3);
+    var points = pointSrc.slice(0, 5).map(function (t) { return short(t, 130); });
+
+    return { intro: intro, points: points, closing: short(closing, 130) };
+  }
+
+  function defaultPoints(topic) {
+    return [
+      topic + ' 전에 몸통 세팅부터 확인합니다. 갈비뼈를 내리고 골반을 세우는 것에서 시작합니다.',
+      '숨을 내쉬면서 복압을 360도로 유지합니다. 배 앞만 딱딱해지면 힘이 새는 신호입니다.',
+      '반동 없이 불편감 없는 범위에서 천천히, 자극이 어디로 가는지 확인하며 진행합니다.'
+    ];
+  }
+
+  function splitRegion(s) {
+    var arr = String(s || '').split(/[,،，\n\/]+/).map(function (x) {
+      return x.replace(/#/g, '').trim();
+    }).filter(Boolean);
+    var uniq = [];
+    arr.forEach(function (x) { uniquePush(uniq, x); });
+    if (!uniq.length) uniq.push('강남pt');
+    return uniq;
+  }
+
+  function targetsFor(ctx) {
+    var hay = (ctx.memo + ' ' + ctx.topic).toLowerCase();
+    var out = [];
+    function add(s) { if (s) uniquePush(out, s); }
+    if (/어깨|라운드|승모|목이|거북목/.test(hay)) add('어깨·목이 뻐근해 운동해도 시원하지 않은 분');
+    if (/허리|골반|디스크/.test(hay)) add('허리·골반 정렬이 신경 쓰이는 분');
+    if (/무릎|하체|스쿼트|익스텐션/.test(hay)) add('무릎이 불편해 하체 운동을 미뤄 온 분');
+    if (/롱풀|랫풀|등 운동|당기|날개뼈/.test(hay)) add('등 운동인데 팔·허리만 먼저 지치는 분');
+    if (/다이어트|감량|체중|체지방/.test(hay)) add('체중·체형 관리가 목표인 분');
+    if (/초보|입문|처음/.test(hay)) add('운동을 처음 시작해 기구 사용이 막막한 분');
+    if (/코어|복압|자세|정렬/.test(hay)) add('코어·자세 감각을 확실히 잡고 싶은 분');
+    add((ctx.regions[0] || ctx.p.center) + '에서 운동할 곳을 찾는 분');
+    DEFAULT_TARGETS.forEach(function (t) { if (out.length < 3) add(t); });
+    return out.slice(0, 4);
+  }
+
+  /* =========================================================
+     6. 태그
+     ========================================================= */
+  function topicTokens(topic) {
+    return String(topic || '')
+      .split(/[^가-힣a-zA-Z0-9]+/)
+      .map(function (t) { return t.trim(); })
+      .filter(function (t) {
+        return t.length >= 2 && t.length <= 10 && STOP_TOKENS.indexOf(t) === -1;
+      })
+      .slice(0, 3);
+  }
+
+  function buildTags(ctx, max) {
+    max = max || 24;
+    var out = [], seen = {};
+    function push(t) {
+      var s = String(t || '').replace(/#/g, '').replace(/[^0-9A-Za-z가-힣ㄱ-ㅎㅏ-ㅣ]/g, '');
+      if (!s) return;
+      var k = s.toLowerCase();
+      if (seen[k]) return;
+      if (out.length >= max) return;
+      seen[k] = true;
+      out.push(s);
+    }
+    ctx.regions.forEach(function (r) { push(r); });
+    ctx.regions.forEach(function (r) { if (/헬스$/.test(r)) push(r + '장'); });
+    push(ctx.p.center);
+    if (ctx.p.brand) push(ctx.p.brand);
+    topicTokens(ctx.topic).forEach(push);
+    GENERIC_TAGS.forEach(push);
+    return out.slice(0, max);
+  }
+
+  /* =========================================================
+     7. 채널별 문구 생성
+     ========================================================= */
+  function regionAt(ctx, i, fb) {
+    return ctx.regions[i] || fb || ctx.regions[0] || ctx.p.center;
+  }
+
+  function joinUnique(words) {
+    var out = [];
+    words.filter(Boolean).forEach(function (w) { uniquePush(out, w); });
+    return out.join(' ');
+  }
+
+  function blogText(ctx) {
+    var p = ctx.p;
+    var R0 = regionAt(ctx, 0), R1 = regionAt(ctx, 1, R0), R2 = regionAt(ctx, 2, R1), R3 = regionAt(ctx, 3, R0);
+    var titles = [
+      joinUnique([R0, R2]) + ' ' + p.center + ' | ' + ctx.topic,
+      ctx.topic + ' | ' + R1 + ' ' + p.center + ' 운동 가이드',
+      R3 + ' ' + p.center + ' | ' + ctx.topic + ' 핵심 ' + ctx.points.length + '가지'
+    ];
+
+    var L = [];
+    L.push('【제목 후보 · 하나를 골라 쓰세요】');
+    L.push('① ' + titles[0] + '   ← 추천');
+    L.push('② ' + titles[1]);
+    L.push('③ ' + titles[2]);
+    L.push('');
+    L.push('────────────────────────────');
+    L.push('');
+    L.push('안녕하세요, ' + joinUnique([R0, R2]) + ' ' + p.center + '입니다.');
+    L.push('');
+    var introStarts = /^(오늘은|오늘|이번엔|이번에는)/.test(ctx.intro[0] || '');
+    if (!introStarts) {
+      L.push('오늘은 ' + ctx.topic + '에 대해 정리해 봤습니다.');
+      L.push('');
+    }
+    if (ctx.intro.length) {
+      ctx.intro.forEach(function (t) { L.push(t); L.push(''); });
+    }
+    L.push('■ 핵심 포인트');
+    ctx.points.forEach(function (t, i) { L.push((i + 1) + '. ' + t); });
+    L.push('');
+    L.push('■ 이런 분께 추천합니다');
+    ctx.targets.forEach(function (t) { L.push('• ' + t); });
+    L.push('');
+    L.push('■ ' + p.center + ' 안내');
+    L.push('· 위치·시설: ' + p.about);
+    L.push('· 영업시간: ' + p.hours);
+    L.push('· 문의: ' + p.phone);
+    L.push('');
+    if (p.slogan) {
+      L.push(p.center + ' | ' + p.slogan);
+      L.push('');
+    }
+    L.push(ctx.closing || ('궁금한 점은 편하게 문의 주세요. ' + R0 + '에서 기다리겠습니다.'));
+    L.push('');
+    L.push('운동 중 불편감이 계속되면 운동 전 의료기관 상담을 먼저 권해 드립니다. ' +
+           p.center + josa(p.center, '은', '는') + ' 그 위에서 움직임 케어·컨디셔닝·체형 관리를 함께 봐 드립니다.');
+    L.push('');
+    L.push('태그 ' + ctx.tags.length + '개');
+    L.push(ctx.tags.map(function (t) { return '#' + t; }).join(' '));
+    return L.join('\n');
+  }
+
+  function igText(ctx) {
+    var p = ctx.p;
+    var R0 = regionAt(ctx, 0);
+    var hook = ctx.topic.length <= 24
+      ? ctx.topic + ' — 이거 하나만 보세요 👀'
+      : short(ctx.topic, 20) + ' 👀';
+
+    var L = [hook, ''];
+    ctx.intro.slice(0, 2).forEach(function (t, i) {
+      wrapPara(t, 32).forEach(function (l) { L.push(l); });
+      if (i === 0) L.push('');
+    });
+    L.push('');
+    ctx.points.slice(0, 3).forEach(function (t) { L.push('✔️ ' + short(t, 54)); });
+    L.push('');
+    if (ctx.closing) {
+      wrapPara(ctx.closing, 32).forEach(function (l) { L.push(l); });
+    } else {
+      L.push('자세가 궁금하면 DM 주세요 :)');
+    }
+    L.push('📍 ' + R0 + ' ' + p.center);
+    L.push('⏰ ' + p.hours);
+    L.push('');
+    L.push(ctx.tags.slice(0, 24).map(function (t) { return '#' + t; }).join(' '));
+
+    return L.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function placeText(ctx) {
+    var p = ctx.p;
+    var R0 = regionAt(ctx, 0);
+    var L = [];
+    L.push('[' + p.center + '] ' + ctx.topic + ' 안내');
+    L.push('');
+    L.push((ctx.intro[1] || ctx.intro[0]) ? short(ctx.intro[1] || ctx.intro[0], 90) : (ctx.topic + ', 함께 확인해 보세요.'));
+    L.push('');
+    L.push('· 이런 분께: ' + (ctx.targets[0] || '운동을 시작하려는 분'));
+    L.push('· 핵심 포인트: ' + (ctx.points.slice(0, 2).map(function (t) { return short(t, 36); }).join(' / ') || '몸통 세팅부터 확인'));
+    L.push('· 운영시간: ' + p.hours);
+    L.push('· 위치: ' + p.about);
+    L.push('· 문의: ' + p.phone);
+    L.push('');
+    L.push(R0 + ' ' + p.center + '에서 편하게 상담받아 보세요.');
+    return L.join('\n');
+  }
+
+  /* =========================================================
+     8. 발행 전 점검
+     ========================================================= */
+  function countTags(text) {
+    var m = String(text || '').match(/#[^\s#]+/g);
+    return m ? m.length : 0;
+  }
+
+  function checklist(tab, text, ctx) {
+    var t = String(text || '');
+    var items = [];
+    var hits = findMatches(t, ctx.rules);
+    items.push({
+      ok: hits.length === 0,
+      label: hits.length ? '금지어 ' + hits.length + '건 (수정 필요)' : '금지어 0건'
+    });
+
+    if (tab === 'blog') {
+      var tags = countTags(t);
+      items.push({ ok: tags >= 20 && tags <= 24, label: '태그 ' + tags + '개 (20~24 권장)' });
+      items.push({ ok: t.indexOf(ctx.p.hours) !== -1, label: '영업시간 ' + ctx.p.hours + ' 표기' });
+      items.push({ ok: !!(ctx.p.phone && t.indexOf(ctx.p.phone) !== -1), label: '문의 연락처 포함' });
+      var titleLine = (t.split('\n')[1] || '').trim();
+      items.push({ ok: titleLine.length <= 50, label: '추천 제목 ' + titleLine.length + '자 (50자 이내 권장)' });
+    } else if (tab === 'ig') {
+      var igTags = countTags(t);
+      items.push({ ok: igTags <= 24, label: '해시태그 ' + igTags + ' / 24' });
+      var first = (t.split('\n').filter(function (l) { return l.trim(); })[0] || '').trim();
+      items.push({ ok: first.length <= 40, label: '첫 줄 ' + first.length + '자 (40자 이내 권장)' });
+      items.push({ ok: /DM|디엠|문의/.test(t), label: 'DM·문의 동선 안내' });
+    } else {
+      items.push({ ok: t.length <= 600, label: '길이 ' + t.length + '자 (600자 이내 권장)' });
+      items.push({ ok: t.indexOf(ctx.p.hours) !== -1 && t.indexOf('위치') !== -1, label: '영업시간·위치 포함' });
+      items.push({ ok: !!(ctx.p.phone && t.indexOf(ctx.p.phone) !== -1), label: '문의처 포함' });
+    }
+    return items;
+  }
+
+  /* =========================================================
+     9. 전체 조립
+     ========================================================= */
+  function prepare(profileIn, memoIn, banned, topicIn) {
+    var p = {};
+    Object.keys(DEFAULTS).forEach(function (k) { p[k] = DEFAULTS[k]; });
+    if (profileIn) {
+      Object.keys(profileIn).forEach(function (k) {
+        if (profileIn[k] !== undefined && profileIn[k] !== null) p[k] = String(profileIn[k]);
+      });
+    }
+    if (!p.center.trim()) p.center = DEFAULTS.center;
+    if (!p.hours.trim()) p.hours = DEFAULTS.hours;
+    if (!p.region.trim()) p.region = DEFAULTS.region;
+
+    var rules = compileRules(banned);
+    var rawMemo = normalizeText(memoIn);
+    var cleaned = sanitize(rawMemo, rules, p);
+    var memo = cleaned.text;
+    var regions = splitRegion(p.region);
+
+    var topicRaw = String(topicIn || '').trim();
+    var topic = topicRaw ? sanitize(topicRaw, rules, p).text : deriveTopic(memo);
+
+    var ctx = {
+      p: p,
+      regions: regions,
+      rules: rules,
+      rawMemo: rawMemo,
+      memo: memo,
+      topic: topic,
+      autoLog: cleaned.log,
+      rawHits: cleaned.matches,
+      empty: !memo.trim()
+    };
+
+    var a = analyze(memo);
+    ctx.intro = a.intro;
+    ctx.closing = a.closing;
+    ctx.points = a.points.length ? a.points : defaultPoints(topic);
+    ctx.targets = targetsFor(ctx);
+    ctx.tags = buildTags(ctx, 24);
+
+    if (ctx.empty) {
+      ctx.blog = '';
+      ctx.ig = '';
+      ctx.place = '';
+    } else {
+      ctx.blog = blogText(ctx);
+      ctx.ig = igText(ctx);
+      ctx.place = placeText(ctx);
+    }
+    return ctx;
+  }
+
+  /* =========================================================
+     10. UI
+     ========================================================= */
+  const LS_PROFILE = 'fcs.profile.v1';
+  const LS_BANNED = 'fcs.banned.v1';
+  const TABS = ['blog', 'ig', 'place'];
+
+  function initUI() {
+    var state = {
+      profile: {},
+      banned: [],
+      memo: '',
+      topic: '',
+      active: 'blog',
+      locked: { blog: false, ig: false, place: false },
+      ctx: null
+    };
+    var toastTimer = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg) {
+      var t = $('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+    }
+
+    function readJSON(key) {
+      try {
+        var v = window.localStorage.getItem(key);
+        return v ? JSON.parse(v) : null;
+      } catch (e) { return null; }
+    }
+
+    function writeJSON(key, value) {
+      try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    }
+
+    /* ---------- 상태 로드/저장 ---------- */
+    function loadStored() {
+      var stored = readJSON(LS_PROFILE) || {};
+      state.profile = {};
+      Object.keys(DEFAULTS).forEach(function (k) {
+        state.profile[k] = (typeof stored[k] === 'string' && stored[k]) ? stored[k] : DEFAULTS[k];
+      });
+      var b = readJSON(LS_BANNED);
+      state.banned = Array.isArray(b) ? b.filter(function (x) { return x && x.word; })
+        .map(function (x) { return { word: String(x.word), alt: String(x.alt || '') }; }) : [];
+    }
+
+    function fillProfileInputs() {
+      var map = {
+        pCenter: 'center', pBrand: 'brand', pRegion: 'region', pHours: 'hours',
+        pAbout: 'about', pPhone: 'phone', pSlogan: 'slogan'
+      };
+      Object.keys(map).forEach(function (id) {
+        var el = $(id);
+        if (el) el.value = state.profile[map[id]] || '';
+      });
+    }
+
+    function readProfileInputs() {
+      var map = {
+        pCenter: 'center', pBrand: 'brand', pRegion: 'region', pHours: 'hours',
+        pAbout: 'about', pPhone: 'phone', pSlogan: 'slogan'
+      };
+      Object.keys(map).forEach(function (id) {
+        var el = $(id);
+        if (el) state.profile[map[id]] = el.value;
+      });
+      writeJSON(LS_PROFILE, state.profile);
+    }
+
+    /* ---------- 배지 ---------- */
+    function setBadge(el, hits, text) {
+      if (!el) return;
+      el.classList.remove('badge-neutral', 'badge-ok', 'badge-risk', 'badge-warn');
+      if (!String(text || '').trim()) {
+        el.classList.add('badge-neutral');
+        el.textContent = '대기';
+        return;
+      }
+      if (!hits.length) {
+        el.classList.add('badge-ok');
+        el.textContent = '금지어 0건 · 안전';
+        return;
+      }
+      var hasRisk = hits.some(function (h) { return h.rule.sev === 'risk'; });
+      var hasWarn = hits.some(function (h) { return h.rule.sev !== 'risk'; });
+      if (hasRisk) {
+        el.classList.add('badge-risk');
+        el.textContent = '위험 표현 ' + hits.length + '건';
+      } else if (hasWarn) {
+        el.classList.add('badge-warn');
+        el.textContent = '주의 표현 ' + hits.length + '건';
+      } else {
+        el.classList.add('badge-warn');
+        el.textContent = '금지어 ' + hits.length + '건';
+      }
+    }
+
+    /* ---------- 필터 패널 ---------- */
+    function renderFilter(ctx) {
+      var pv = $('preview');
+      if (!ctx.rawMemo.trim()) {
+        pv.className = 'preview empty';
+        pv.textContent = '원고를 입력하면 위험 표현이 여기에 표시됩니다.';
+      } else {
+        pv.className = 'preview';
+        pv.innerHTML = highlight(ctx.rawMemo, ctx.rules);
+      }
+
+      var hits = ctx.rawHits || [];
+      setBadge($('badgeFilter'), hits, ctx.rawMemo);
+
+      var total = hits.length;
+      var autoCount = (ctx.autoLog || []).reduce(function (s, x) { return s + x.count; }, 0);
+      if (!ctx.rawMemo.trim()) {
+        $('autoInfo').textContent = '발행용 문구는 위험 표현을 안전한 표현으로 자동 치환해 만듭니다.';
+      } else if (!autoCount) {
+        $('autoInfo').textContent = '치환할 표현이 없습니다. 원고 그대로 발행할 수 있습니다.';
+      } else {
+        $('autoInfo').textContent = '원고의 ' + autoCount + '곳을 안전한 표현으로 바꿔 발행용 문구에 반영했습니다. (위 원고 자체는 그대로입니다)';
+      }
+
+      var list = $('hitList');
+      list.innerHTML = '';
+      if (total) {
+        var groups = {}, order = [];
+        hits.forEach(function (h) {
+          var k = h.rule.id + '|' + h.rule.word;
+          if (!groups[k]) { groups[k] = { rule: h.rule, count: 0 }; order.push(k); }
+          groups[k].count++;
+        });
+        order.forEach(function (k) {
+          var g = groups[k];
+          var rule = g.rule;
+          var alts = (rule.alts || []);
+          var chips = alts.map(function (a) {
+            var label = resolveAlt(a, ctx.p);
+            return '<button type="button" class="chip" data-word="' + esc(rule.word) +
+                   '" data-alt="' + esc(label) + '">' + esc(label) + '</button>';
+          }).join('');
+          if (!alts.length) {
+            chips = '<button type="button" class="chip del" data-word="' + esc(rule.word) +
+                    '" data-alt="">삭제</button>';
+          }
+          var sevText = rule.sev === 'risk' ? '위험' : (rule.sev === 'custom' ? '내 금지어' : '주의');
+          var badgeCls = rule.sev === 'risk' ? 'badge-risk' : (rule.sev === 'custom' ? 'badge-neutral' : 'badge-warn');
+          list.insertAdjacentHTML('beforeend',
+            '<div class="hit">' +
+              '<div class="hit-top">' +
+                '<span class="dot ' + rule.sev + '"></span>' +
+                '<span class="hit-word">' + esc(rule.word) + '</span>' +
+                '<span class="hit-count">×' + g.count + '</span>' +
+                '<span class="badge ' + badgeCls + '">' + sevText + '</span>' +
+                '<span class="hit-count">' + esc(rule.cat) + '</span>' +
+              '</div>' +
+              '<p class="hit-why">' + esc(rule.why) + '</p>' +
+              '<div class="alts">' + chips + '</div>' +
+            '</div>');
+        });
+      }
+
+      var bulk = $('bulkFix');
+      bulk.disabled = !total;
+      bulk.textContent = total ? ('안전 표현으로 일괄 치환 (' + total + '곳)') : '안전 표현으로 일괄 치환';
+    }
+
+    /* ---------- 채널 상태 ---------- */
+    function updateStatus(tab) {
+      var ctx = state.ctx;
+      if (!ctx) return;
+      var ta = $('out-' + tab);
+      var text = ta ? ta.value : '';
+      var hits = findMatches(text, ctx.rules);
+
+      setBadge($('badge-' + tab), hits, text);
+
+      var lenEl = $('len-' + tab);
+      if (lenEl) lenEl.textContent = text.length.toLocaleString('ko-KR') + '자';
+
+      var dot = $('dot-' + tab);
+      if (dot) dot.className = 'sdot' + (text ? (hits.length ? ' bad' : ' good') : '');
+
+      var count = $('count-' + tab);
+      if (count) count.textContent = text ? String(hits.length) : '';
+
+      if (tab === 'ig') {
+        var tc = $('tagcount-ig');
+        if (tc) {
+          var n = countTags(text);
+          tc.textContent = n + ' / 24';
+          tc.style.color = n > 24 ? '#a4122b' : '';
+          tc.style.fontWeight = n > 24 ? '800' : '';
+        }
+      }
+
+      var fix = $('fix-' + tab);
+      if (fix) {
+        fix.hidden = hits.length === 0;
+        fix.textContent = '안전 표현으로 치환 (' + hits.length + ')';
+      }
+
+      var copyBtn = $('copy-' + tab);
+      if (copyBtn) copyBtn.disabled = !text.trim();
+
+      var mode = $('mode-' + tab);
+      if (mode) mode.textContent = state.locked[tab] && text ? '직접 수정함 · ' : '';
+
+      var checksEl = $('checks-' + tab);
+      if (checksEl) {
+        if (!text.trim()) { checksEl.innerHTML = ''; }
+        else {
+          checksEl.innerHTML = checklist(tab, text, ctx).map(function (c) {
+            return '<li class="' + (c.ok ? 'ok' : 'no') + '">' + (c.ok ? '✅' : '⚠️') + ' ' + esc(c.label) + '</li>';
+          }).join('');
+        }
+      }
+    }
+
+    function renderTab(tab) {
+      var ctx = state.ctx;
+      if (!ctx) return;
+      var ta = $('out-' + tab);
+      if (!ta) return;
+      if (!state.locked[tab] || !ta.value.trim()) {
+        ta.value = ctx.empty ? '' : (tab === 'blog' ? ctx.blog : tab === 'ig' ? ctx.ig : ctx.place);
+        if (!ctx.empty) state.locked[tab] = false;
+      }
+      updateStatus(tab);
+    }
+
+    function noteText(ctx) {
+      if (ctx.empty) return '원고를 입력하거나 예시를 불러오면 3개 채널 문구가 자동으로 만들어집니다.';
+      var n = (ctx.autoLog || []).reduce(function (s, x) { return s + x.count; }, 0);
+      if (!n) return '금지·위험 표현 없이 바로 발행 가능한 문구를 만들었습니다.';
+      return '원고의 위험 표현 ' + n + '곳을 안전 표현으로 바꿔 3개 채널 문구에 반영했습니다.';
+    }
+
+    /* ---------- 전체 갱신 ---------- */
+    function refresh() {
+      readProfileInputs();
+      state.memo = $('memo').value;
+      state.topic = $('topic').value;
+      var ctx = prepare(state.profile, state.memo, state.banned, state.topic);
+      state.ctx = ctx;
+      renderFilter(ctx);
+      TABS.forEach(renderTab);
+      $('convertNote').textContent = noteText(ctx);
+      renderCustomList();
+    }
+
+    /* ---------- 직접 추가 금지어 ---------- */
+    function renderCustomList() {
+      var box = $('customList');
+      box.innerHTML = '';
+      if (!state.banned.length) {
+        box.innerHTML = '<span class="soft" style="font-size:11.5px">아직 추가한 표현이 없습니다.</span>';
+        return;
+      }
+      state.banned.forEach(function (c, i) {
+        var el = document.createElement('span');
+        el.className = 'tag';
+        el.innerHTML = esc(c.word) + (c.alt ? ' → ' + esc(c.alt) : ' → 삭제') +
+          '<button type="button" data-index="' + i + '" aria-label="삭제">×</button>';
+        box.appendChild(el);
+      });
+    }
+
+    function addCustom() {
+      var w = $('customWord').value.trim();
+      var a = $('customAlt').value.trim();
+      if (!w) { toast('금지어를 입력해 주세요.'); $('customWord').focus(); return; }
+      var exists = state.banned.some(function (c) { return c.word.toLowerCase() === w.toLowerCase(); });
+      if (exists) { toast('이미 추가된 표현입니다.'); return; }
+      state.banned.push({ word: w, alt: a });
+      writeJSON(LS_BANNED, state.banned);
+      $('customWord').value = '';
+      $('customAlt').value = '';
+      refresh();
+      toast('‘' + w + '’' + (a ? ' → ‘' + a + '’' : ' → 삭제') + ' 규칙을 추가했습니다.');
+    }
+
+    /* ---------- 치환 ---------- */
+    function replaceInMemo(word, alt) {
+      var memoEl = $('memo');
+      var re;
+      try { re = new RegExp(wordBody(word), 'gi'); }
+      catch (e) { re = new RegExp(escRe(word), 'gi'); }
+      var n = 0;
+      var next = memoEl.value.replace(re, function () { n++; return alt; });
+      memoEl.value = next;
+      refresh();
+      toast(n ? ('‘' + word + '’ ' + n + '곳을 ‘' + (alt || '삭제') + '’(으)로 바꿨습니다.')
+              : '바꿀 표현을 찾지 못했습니다.');
+    }
+
+    function bulkFixMemo() {
+      var ctx = state.ctx;
+      var res = sanitize($('memo').value, ctx.rules, ctx.p);
+      $('memo').value = res.text;
+      refresh();
+      toast(res.matches.length + '곳을 안전 표현으로 바꿨습니다.');
+    }
+
+    function fixTab(tab) {
+      var ta = $('out-' + tab);
+      var res = sanitize(ta.value, state.ctx.rules, state.ctx.p);
+      ta.value = res.text;
+      state.locked[tab] = true;
+      updateStatus(tab);
+      toast(res.matches.length + '곳을 안전 표현으로 바꿨습니다.');
+    }
+
+    /* ---------- 복사 ---------- */
+    function copyText(btn) {
+      var id = btn.getAttribute('data-target');
+      var ta = $(id);
+      if (!ta || !ta.value.trim()) { toast('복사할 내용이 없습니다.'); return; }
+      var text = ta.value;
+
+      function done() {
+        var old = btn.textContent;
+        btn.textContent = '복사됨!';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = old;
+          btn.classList.remove('done');
+        }, 1600);
+        toast('클립보드에 복사했습니다.');
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          ta.select();
+          try { document.execCommand('copy'); done(); }
+          catch (e) { toast('복사가 막혔습니다. 문구를 직접 선택해 복사해 주세요.'); }
+        });
+      } else {
+        ta.select();
+        try { document.execCommand('copy'); done(); }
+        catch (e) { toast('복사가 막혔습니다. 문구를 직접 선택해 복사해 주세요.'); }
+      }
+    }
+
+    /* ---------- 탭 ---------- */
+    function selectTab(name) {
+      state.active = name;
+      TABS.forEach(function (t) {
+        var tab = $('tab-' + t);
+        var panel = $('panel-' + t);
+        var on = t === name;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        tab.tabIndex = on ? 0 : -1;
+        panel.hidden = !on;
+      });
+    }
+
+    /* ---------- 사전 ---------- */
+    function renderDict() {
+      var words = 0;
+      RULES.forEach(function (r) { words += r.words.length; });
+      $('dictCount').textContent = String(words);
+      $('dictBody').innerHTML = RULES.map(function (r) {
+        var sev = r.sev === 'risk' ? '위험' : '주의';
+        var cls = r.sev === 'risk' ? 'badge-risk' : 'badge-warn';
+        return '<div class="dict-row">' +
+          '<div class="dict-head"><span class="badge ' + cls + '">' + sev + '</span>' +
+          '<span class="dict-cat">' + esc(r.cat) + '</span></div>' +
+          '<p class="dict-words">' + r.words.map(function (w) { return '<code>' + esc(w) + '</code>'; }).join('') + '</p>' +
+          '<p class="dict-alt">추천 → ' + r.alts.map(function (a) { return esc(a); }).join(', ') + '</p>' +
+        '</div>';
+      }).join('');
+    }
+
+    /* ---------- 이벤트 ---------- */
+    var debounceTimer = null;
+    function debouncedRefresh() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(refresh, 160);
+    }
+
+    function bind() {
+      ['pCenter', 'pBrand', 'pRegion', 'pHours', 'pAbout', 'pPhone', 'pSlogan'].forEach(function (id) {
+        $(id).addEventListener('input', debouncedRefresh);
+      });
+      $('memo').addEventListener('input', debouncedRefresh);
+      $('topic').addEventListener('input', debouncedRefresh);
+
+      $('loadExample').addEventListener('click', function () {
+        $('memo').value = EXAMPLE.memo;
+        $('topic').value = EXAMPLE.topic;
+        TABS.forEach(function (t) { state.locked[t] = false; });
+        refresh();
+        toast('예시 원고를 불러왔습니다. (위험 표현이 일부러 들어 있습니다)');
+      });
+
+      $('clearMemo').addEventListener('click', function () {
+        $('memo').value = '';
+        $('topic').value = '';
+        TABS.forEach(function (t) { state.locked[t] = false; });
+        refresh();
+        toast('원고를 지웠습니다.');
+      });
+
+      $('resetProfile').addEventListener('click', function () {
+        if (!window.confirm('센터 프로필을 기본값으로 되돌릴까요? 직접 추가한 금지어는 그대로 둡니다.')) return;
+        state.profile = {};
+        Object.keys(DEFAULTS).forEach(function (k) { state.profile[k] = DEFAULTS[k]; });
+        writeJSON(LS_PROFILE, state.profile);
+        fillProfileInputs();
+        refresh();
+        toast('프로필을 기본값으로 되돌렸습니다.');
+      });
+
+      $('hitList').addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.chip') : null;
+        if (!btn) return;
+        replaceInMemo(btn.getAttribute('data-word'), btn.getAttribute('data-alt') || '');
+      });
+
+      $('bulkFix').addEventListener('click', bulkFixMemo);
+
+      $('addCustom').addEventListener('click', addCustom);
+      $('customWord').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
+      });
+      $('customAlt').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
+      });
+      $('customList').addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('button[data-index]') : null;
+        if (!b) return;
+        var i = parseInt(b.getAttribute('data-index'), 10);
+        if (isNaN(i)) return;
+        var removed = state.banned[i];
+        state.banned.splice(i, 1);
+        writeJSON(LS_BANNED, state.banned);
+        refresh();
+        if (removed) toast('‘' + removed.word + '’ 규칙을 지웠습니다.');
+      });
+
+      TABS.forEach(function (t) {
+        $('tab-' + t).addEventListener('click', function () { selectTab(t); });
+        $('copy-' + t).addEventListener('click', function () { copyText(this); });
+        $('regen-' + t).addEventListener('click', function () {
+          state.locked[t] = false;
+          renderTab(t);
+          toast('원고 기준으로 다시 만들었습니다.');
+        });
+        $('fix-' + t).addEventListener('click', function () { fixTab(t); });
+        $('out-' + t).addEventListener('input', function () {
+          state.locked[t] = true;
+          updateStatus(t);
+        });
+      });
+
+      $('tab-blog').parentNode.addEventListener('keydown', function (e) {
+        var i = TABS.indexOf(state.active);
+        if (i < 0) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(TABS[(i + 1) % 3]); $('tab-' + TABS[(i + 1) % 3]).focus(); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(TABS[(i + 2) % 3]); $('tab-' + TABS[(i + 2) % 3]).focus(); }
+        if (e.key === 'Home') { e.preventDefault(); selectTab(TABS[0]); $('tab-blog').focus(); }
+        if (e.key === 'End') { e.preventDefault(); selectTab(TABS[2]); $('tab-place').focus(); }
+      });
+    }
+
+    /* ---------- 시작 ---------- */
+    loadStored();
+    fillProfileInputs();
+    renderDict();
+    bind();
+    selectTab('blog');
+    refresh();
+
+    /* 첫 방문이면 예시로 바로 보여 준다 */
+    try {
+      if (!window.localStorage.getItem('fcs.seen.v1') && !$('memo').value.trim()) {
+        $('memo').value = EXAMPLE.memo;
+        $('topic').value = EXAMPLE.topic;
+        window.localStorage.setItem('fcs.seen.v1', '1');
+        refresh();
+      }
+    } catch (e) {}
+  }
+
+  const api = {
+    DEFAULTS: DEFAULTS,
+    EXAMPLE: EXAMPLE,
+    RULES: RULES,
+    compileRules: compileRules,
+    findMatches: findMatches,
+    sanitize: sanitize,
+    highlight: highlight,
+    altFor: altFor,
+    resolveAlt: resolveAlt,
+    wordBody: wordBody,
+    deriveTopic: deriveTopic,
+    analyze: analyze,
+    buildTags: buildTags,
+    blogText: blogText,
+    igText: igText,
+    placeText: placeText,
+    checklist: checklist,
+    countTags: countTags,
+    prepare: prepare
+  };
+
+  if (typeof document !== 'undefined' && document.getElementById && document.getElementById('app')) {
+    initUI();
+  }
+
+  return api;
+})();
+
+if (typeof globalThis !== 'undefined') globalThis.FCS = FCS;
+</script>
+</body>
+</html>
